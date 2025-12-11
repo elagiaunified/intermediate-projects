@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder | Discover Delicious Meals</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-utensils"></i> Recipe Finder</h1>
+                <p class="tagline">Discover delicious recipes from around the world</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <i class="fas fa-book"></i>
+                    <span>Recipes</span>
+                    <strong id="totalRecipes">1000+</strong>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-globe"></i>
+                    <span>Cuisines</span>
+                    <strong>50+</strong>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-clock"></i>
+                    <span>Quick Meals</span>
+                    <strong>30 min</strong>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2>What's cooking today?</h2>
+                    <p class="hero-subtitle">Find perfect recipes for any occasion, dietary need, or skill level</p>
+                    
+                    <!-- Main Search -->
+                    <div class="main-search">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input 
+                                type="text" 
+                                id="mainSearch" 
+                                placeholder="Search recipes (e.g., 'pasta', 'chicken', 'vegetarian')..."
+                                autocomplete="off"
+                            >
+                            <button id="searchBtn" class="search-btn">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                        <div class="search-tags">
+                            <span class="tag-label">Quick Searches:</span>
+                            <button class="tag" data-search="pasta">Pasta</button>
+                            <button class="tag" data-search="chicken">Chicken</button>
+                            <button class="tag" data-search="vegetarian">Vegetarian</button>
+                            <button class="tag" data-search="dessert">Dessert</button>
+                            <button class="tag" data-search="breakfast">Breakfast</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="image-slider">
+                        <div class="slider-item active" style="background-image: url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="slider-item" style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                        <div class="slider-item" style="background-image: url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-header">
+                    <h3><i class="fas fa-filter"></i> Filter Recipes</h3>
+                    <button id="clearFilters" class="clear-btn">
+                        <i class="fas fa-redo"></i> Clear All
+                    </button>
+                </div>
+                
+                <div class="filters-grid">
+                    <!-- Category Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-list"></i> Category</label>
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="Beef">Beef</option>
+                            <option value="Chicken">Chicken</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Vegetarian">Vegetarian</option>
+                            <option value="Vegan">Vegan</option>
+                            <option value="Pasta">Pasta</option>
+                            <option value="Seafood">Seafood</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Area/Cuisine Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-globe"></i> Cuisine</label>
+                        <select id="areaFilter" class="filter-select">
+                            <option value="">All Cuisines</option>
+                            <option value="American">American</option>
+                            <option value="British">British</option>
+                            <option value="Canadian">Canadian</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="French">French</option>
+                            <option value="Indian">Indian</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Mexican">Mexican</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="Thai">Thai</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Cooking Time Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-clock"></i> Max Time</label>
+                        <select id="timeFilter" class="filter-select">
+                            <option value="">Any Time</option>
+                            <option value="15">15 min or less</option>
+                            <option value="30">30 min or less</option>
+                            <option value="45">45 min or less</option>
+                            <option value="60">60 min or less</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Difficulty Filter -->
+                    <div class="filter-group">
+                        <label><i class="fas fa-signal"></i> Difficulty</label>
+                        <select id="difficultyFilter" class="filter-select">
+                            <option value="">Any Level</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Advanced Filters Toggle -->
+                <div class="advanced-toggle">
+                    <button id="toggleAdvanced">
+                        <i class="fas fa-sliders-h"></i> Advanced Filters
+                        <i class="fas fa-chevron-down" id="advancedIcon"></i>
+                    </button>
+                </div>
+                
+                <!-- Advanced Filters (Hidden by default) -->
+                <div class="advanced-filters" id="advancedFilters">
+                    <div class="advanced-grid">
+                        <!-- Dietary Restrictions -->
+                        <div class="filter-group">
+                            <label><i class="fas fa-leaf"></i> Dietary</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="vegetarian">
+                                    <span class="checkmark"></span>
+                                    <span>Vegetarian</span>
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="vegan">
+                                    <span class="checkmark"></span>
+                                    <span>Vegan</span>
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="glutenFree">
+                                    <span class="checkmark"></span>
+                                    <span>Gluten Free</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Ingredients Filter -->
+                        <div class="filter-group">
+                            <label><i class="fas fa-carrot"></i> Ingredients</label>
+                            <div class="ingredients-input">
+                                <input type="text" id="ingredientsInput" placeholder="Add ingredients (comma separated)">
+                                <button id="addIngredient"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div class="ingredients-tags" id="ingredientsTags">
+                                <!-- Ingredients tags will appear here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Sorting -->
+                        <div class="filter-group">
+                            <label><i class="fas fa-sort"></i> Sort By</label>
+                            <select id="sortFilter" class="filter-select">
+                                <option value="name">Name (A-Z)</option>
+                                <option value="name_desc">Name (Z-A)</option>
+                                <option value="time">Cooking Time</option>
+                                <option value="popular">Most Popular</option>
+                                <option value="rating">Highest Rating</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section">
+                <div class="results-header">
+                    <h3><i class="fas fa-list"></i> Recipe Results</h3>
+                    <div class="results-info">
+                        <span id="resultsCount">0</span> recipes found
+                        <div class="view-toggle">
+                            <button id="gridView" class="view-btn active">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button id="listView" class="view-btn">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recipes Grid -->
+                <div class="recipes-grid" id="recipesGrid">
+                    <!-- Recipe cards will be loaded here -->
+                    <div class="loading-placeholder">
+                        <i class="fas fa-utensils fa-spin"></i>
+                        <p>Loading delicious recipes...</p>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Pagination buttons will be added here -->
+                </div>
+            </section>
+
+            <!-- Featured Recipes -->
+            <section class="featured-section">
+                <h2><i class="fas fa-star"></i> Featured Recipes</h2>
+                <div class="featured-slider" id="featuredSlider">
+                    <!-- Featured recipes will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Meal Planning -->
+            <section class="meal-planning">
+                <div class="planning-header">
+                    <h2><i class="fas fa-calendar-alt"></i> Weekly Meal Plan</h2>
+                    <button id="generatePlan" class="plan-btn">
+                        <i class="fas fa-magic"></i> Generate Plan
+                    </button>
+                </div>
+                
+                <div class="week-plan">
+                    <div class="day-plan" data-day="monday">
+                        <div class="day-header">
+                            <h4>Monday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="mondayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="tuesday">
+                        <div class="day-header">
+                            <h4>Tuesday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="tuesdayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="wednesday">
+                        <div class="day-header">
+                            <h4>Wednesday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="wednesdayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="thursday">
+                        <div class="day-header">
+                            <h4>Thursday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="thursdayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="friday">
+                        <div class="day-header">
+                            <h4>Friday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="fridayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="saturday">
+                        <div class="day-header">
+                            <h4>Saturday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="saturdayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="day-plan" data-day="sunday">
+                        <div class="day-header">
+                            <h4>Sunday</h4>
+                            <button class="add-meal"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="meal-card" id="sundayMeal">
+                            <div class="empty-meal">
+                                <i class="fas fa-utensils"></i>
+                                <span>No meal planned</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shopping List -->
+                <div class="shopping-list">
+                    <div class="list-header">
+                        <h3><i class="fas fa-shopping-cart"></i> Shopping List</h3>
+                        <button id="clearList" class="clear-btn">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div class="list-content" id="shoppingList">
+                        <div class="empty-list">
+                            <i class="fas fa-shopping-basket"></i>
+                            <p>Add meals to your plan to generate a shopping list</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Favorites Section -->
+            <section class="favorites-section">
+                <div class="favorites-header">
+                    <h2><i class="fas fa-heart"></i> Your Favorite Recipes</h2>
+                    <button id="viewAllFavorites" class="view-all-btn">
+                        View All <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="favorites-grid" id="favoritesGrid">
+                    <!-- Favorite recipes will be loaded here -->
+                    <div class="empty-favorites">
+                        <i class="fas fa-heart"></i>
+                        <p>You haven't saved any favorites yet</p>
+                        <small>Click the heart icon on any recipe to save it here</small>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Recipe Finder</h4>
+                    <p>Discover delicious meals from around the world</p>
+                    <p>Perfect for home cooks of all levels</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <p>Advanced search & filters</p>
+                    <p>Meal planning</p>
+                    <p>Shopping list generator</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Data Source</h4>
+                    <p>TheMealDB API</p>
+                    <p>Free recipe database</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Project</h4>
+                    <p>Intermediate Project #2</p>
+                    <p>Recipe Finder App</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2023 Recipe Finder | Discover, Cook, Enjoy!</p>
+                <p class="api-note">Powered by TheMealDB API</p>
+            </div>
+        </footer>
+
+        <!-- Recipe Modal -->
+        <div class="modal" id="recipeModal">
+            <div class="modal-content recipe-modal">
+                <button class="close-modal">&times;</button>
+                <div class="modal-body" id="modalBody">
+                    <!-- Recipe details will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <i class="fas fa-utensils fa-spin"></i>
+                <p>Loading recipe details...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer"></div>
+    </div>
+
+    <!-- Splide Slider JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
