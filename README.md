@@ -50,26 +50,23 @@ This repository focuses on **intermediate to advanced web development skills**:
 - (Optional) Code editor like VS Code
 
 ### **Running Locally**
-1. **Clone the repository**
+1. Clone the repository
    ```bash
    git clone https://github.com/yourusername/intermediate-projects.git
-  ```
+   ```
 
-Navigate to any project folder
+2. Navigate to any project folder
 
-bash
+```bash
 cd intermediate-projects/weather-app
-Open index.html in your browser
+```
+
+3. Open index.html in your browser
 
 For APIs requiring keys, follow the project-specific instructions
 
-Using GitHub Pages
-Each project is automatically deployed via GitHub Pages:
+## 📁 Project Structure
 
-text
-https://yourusername.github.io/intermediate-projects/project-name/
-📁 Project Structure
-text
 intermediate-projects/
 ├── weather-app/          # Project 1: Real-time weather application
 ├── recipe-finder/       # Project 2: Recipe search with meal planning
@@ -77,118 +74,92 @@ intermediate-projects/
 ├── blog-cms/           # Project 4: Content management system
 ├── chat-app/           # Project 5: Real-time chat interface
 └── README.md           # This file
-🛠️ Technologies Used
+
+## 🛠️ Technologies Used
 Core Technologies
 HTML5: Semantic markup and structure
-
 CSS3: Flexbox, Grid, animations, responsive design
-
 JavaScript (ES6+): Modern syntax, async/await, classes
 
 APIs & Services
 OpenWeatherMap API: Real-time weather data
-
 TheMealDB API: Free recipe database
-
 Geolocation API: Browser location services
-
 Chart.js: Data visualization library
 
 Development Tools
 Git & GitHub: Version control and deployment
-
 GitHub Pages: Free static hosting
-
 Font Awesome: Icon library
-
 Google Fonts: Typography
 
-📈 Skill Progression
+## 📈 Skill Progression
 Project 1: Weather App
 Learned API integration with authentication
-
 Implemented geolocation services
-
 Created responsive weather dashboard
-
 Added temperature unit conversion
 
 Project 2: Recipe Finder
 Mastered complex data filtering
-
 Built meal planning system
-
 Implemented favorites with localStorage
-
 Created advanced search functionality
 
 Future Projects
 Expense Tracker: Data visualization with charts
-
 Blog/CMS: CRUD operations with rich text
-
 Chat App: Real-time concepts and WebSockets
 
-🔧 API Configuration
+## 🔧 API Configuration
 Some projects require API keys for full functionality:
 
 Weather App
 Sign up at OpenWeatherMap
-
 Get your free API key
-
 Enter it in the app when prompted
-
 Or use Demo Mode for sample data
 
 Recipe Finder
 Uses TheMealDB API which requires no API key
-
 Completely free and open
-
 No registration required
 
-🤝 Contributing
+## 🤝 Contributing
 Contributions are welcome! Here's how you can help:
-
 Fork the repository
-
 Create a feature branch
-
-bash
+```bash
 git checkout -b feature/amazing-feature
+```
 Commit your changes
 
-bash
+```bash
 git commit -m 'Add some amazing feature'
-Push to the branch
+```
 
+Push to the branch
+```
 bash
 git push origin feature/amazing-feature
+```
 Open a Pull Request
 
-📄 License
+## 📄 License
 This project is open source and available under the MIT License.
 
-👨‍💻 Author
+## 👨‍💻 Author
 Your Name
-
 GitHub: @yourusername
-
 Portfolio: [Coming Soon]
-
 LinkedIn: [Your Profile]
 
-🌟 Acknowledgments
+## 🌟 Acknowledgments
 OpenWeatherMap for weather data API
-
 TheMealDB for free recipe database
-
 Font Awesome for icons
-
 Google Fonts for typography
-
 All contributors and supporters
 
-⭐ Support
+## ⭐ Support
 If you find this repository helpful, please give it a star ⭐ on GitHub!
