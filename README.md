@@ -6,8 +6,8 @@ A collection of intermediate-level web applications that demonstrate advanced Ja
 
 | # | Project | Description | Tech Stack | Live Demo |
 |---|---------|-------------|------------|-----------|
-| 1 | [**Weather App**](/weather-app/) | Real-time weather forecasts with geolocation | HTML, CSS, JS, OpenWeather API | [View Demo](https://yourusername.github.io/intermediate-projects/weather-app/) |
-| 2 | [**Recipe Finder**](/recipe-finder/) | Recipe search with meal planning and favorites | HTML, CSS, JS, TheMealDB API | [View Demo](https://yourusername.github.io/intermediate-projects/recipe-finder/) |
+| 1 | [**Weather App**](/weather-app/) | Real-time weather forecasts with geolocation | HTML, CSS, JS, OpenWeather API | [View Demo](https://elagiaunified.github.io/intermediate-projects/weather-app/) |
+| 2 | [**Recipe Finder**](/recipe-finder/) | Recipe search with meal planning and favorites | HTML, CSS, JS, TheMealDB API | [View Demo](https://elagiaunified.github.io/intermediate-projects/recipe-finder/) |
 | 3 | Expense Tracker* | Financial tracking with charts & analytics | HTML, CSS, JS, Chart.js | Coming Soon |
 | 4 | Blog/CMS* | Content management system with rich text editor | HTML, CSS, JS, localStorage | Coming Soon |
 | 5 | Chat App* | Real-time messaging interface | HTML, CSS, JS, WebSocket concepts | Coming Soon |
