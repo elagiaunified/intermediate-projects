@@ -127,6 +127,7 @@ updateShoppingList() {
     // Combine quantities, remove duplicates
     // Generate organized shopping list
 }
+```
 Data Management
 Favorites: Stored in localStorage for persistence
 
