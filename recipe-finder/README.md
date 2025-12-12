@@ -100,6 +100,7 @@ getWeatherIcon(iconCode) {
     };
     return iconMap[iconCode] || 'fas fa-question';
 }
+```
 State Management
 Current Weather: Stores API response data
 
