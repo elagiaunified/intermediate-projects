@@ -24,6 +24,19 @@
                         <span>Dark Mode</span>
                     </button>
                 </div>
+                <div class="currency-selector">
+                    <select id="currencySelect" class="currency-dropdown">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="JPY">JPY (¥)</option>
+                        <option value="INR">INR (₹)</option>
+                        <option value="CAD">CAD (C$)</option>
+                        <option value="AUD">AUD (A$)</option>
+                        <option value="CNY">CNY (¥)</option>
+                    <!-- More currencies will be added by JavaScript -->
+    </select>
+</div>
                 <div class="current-period">
                     <button id="prevMonth" class="period-btn">
                         <i class="fas fa-chevron-left"></i>
@@ -382,6 +395,9 @@
                 <div class="export-options">
                     <button id="exportCSV" class="export-btn">
                         <i class="fas fa-file-csv"></i> Export to CSV
+                    </button>
+                    <button id="currencySettings" class="export-btn">
+                        <i class="fas fa-globe"></i> Currency Settings
                     </button>
                     <button id="generateReport" class="export-btn">
                         <i class="fas fa-chart-bar"></i> Generate Monthly Report
