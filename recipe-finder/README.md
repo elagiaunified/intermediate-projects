@@ -357,9 +357,3 @@ Blog CMS - Content management system (Coming Soon)
 If you find this project useful, please give it a star ⭐ on GitHub!
 
 Part of the Intermediate Web Development Projects collection. Check out the other projects in the main repository!
-
-⬅️ Back to Portfolio
-
-text
-
-5. **Commit changes:** "Added comprehensive weather app README"
