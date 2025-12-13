@@ -3,7 +3,7 @@
 class CurrencyConverter {
     constructor() {
         // Use environment variable or fallback
-        this.apiKey = 'a0d0a7e4e0e2d1c4d3b4a5c6'; // Demo key - replace with your own
+        this.apiKey = '54e45e46382c7741d4b731af'; // Demo key - replace with your own
         this.apiUrl = 'https://api.exchangerate-api.com/v4/latest/';
         this.cacheKey = 'expense-tracker-currency-rates';
         this.cacheDuration = 3600000; // 1 hour in milliseconds
