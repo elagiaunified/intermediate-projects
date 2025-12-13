@@ -55,10 +55,6 @@ Responsive Design: Perfect experience on desktop, tablet, and mobile
 
 Dark/Light Theme: Professional color scheme with great contrast
 
-## 📸 Screenshots
-Desktop Dashboard	Mobile View	Currency Converter
-https://via.placeholder.com/800x450/434343/ffffff?text=Expense+Tracker+Dashboard	https://via.placeholder.com/400x700/000000/ffffff?text=Mobile+View	https://via.placeholder.com/800x450/00b09b/ffffff?text=Currency+Converter
-
 ## 🎯 How to Use
 ### Getting Started
 Visit the live demo or open index.html locally
