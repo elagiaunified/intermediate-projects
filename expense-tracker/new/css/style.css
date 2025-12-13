@@ -567,3 +567,186 @@ tr:hover {
         border: 1px solid var(--border-color);
     }
 }
+
+/* ===== Alert Styles ===== */
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    min-width: 300px;
+    max-width: 400px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+    z-index: 1000;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.alert.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.alert-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    font-size: 1rem;
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+}
+
+.alert-close:hover {
+    opacity: 1;
+}
+
+/* ===== Category Tags ===== */
+.category-tag {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.category-tag.food { 
+    background: rgba(244, 67, 54, 0.1); 
+    color: #f44336; 
+}
+
+.category-tag.transport { 
+    background: rgba(33, 150, 243, 0.1); 
+    color: #2196f3; 
+}
+
+.category-tag.shopping { 
+    background: rgba(156, 39, 176, 0.1); 
+    color: #9c27b0; 
+}
+
+.category-tag.entertainment { 
+    background: rgba(255, 152, 0, 0.1); 
+    color: #ff9800; 
+}
+
+.category-tag.bills { 
+    background: rgba(76, 175, 80, 0.1); 
+    color: #4caf50; 
+}
+
+.category-tag.health { 
+    background: rgba(0, 150, 136, 0.1); 
+    color: #009688; 
+}
+
+.category-tag.education { 
+    background: rgba(255, 193, 7, 0.1); 
+    color: #ffc107; 
+}
+
+.category-tag.other { 
+    background: rgba(158, 158, 158, 0.1); 
+    color: #9e9e9e; 
+}
+
+/* ===== Expense Table Details ===== */
+.expense-name {
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.original-amount {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* ===== Loading Animation ===== */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* ===== Button States ===== */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+    transform: none;
+    background-color: inherit;
+}
+
+/* ===== Form Validation ===== */
+input:invalid, select:invalid {
+    border-color: var(--danger-color) !important;
+}
+
+.form-group .error {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+    display: none;
+}
+
+.form-group input:invalid + .error {
+    display: block;
+}
+
+/* ===== Dark Theme Adjustments ===== */
+[data-theme="dark"] .category-tag.food { 
+    background: rgba(244, 67, 54, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.transport { 
+    background: rgba(33, 150, 243, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.shopping { 
+    background: rgba(156, 39, 176, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.entertainment { 
+    background: rgba(255, 152, 0, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.bills { 
+    background: rgba(76, 175, 80, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.health { 
+    background: rgba(0, 150, 136, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.education { 
+    background: rgba(255, 193, 7, 0.2); 
+}
+
+[data-theme="dark"] .category-tag.other { 
+    background: rgba(158, 158, 158, 0.2); 
+}
