@@ -878,3 +878,560 @@ document.head.appendChild(alertStyles);
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new ExpenseTrackerApp();
 });
+
+    // Enhanced expense form with validation
+    validateExpenseForm() {
+        const name = document.getElementById('expense-name').value.trim();
+        const amount = document.getElementById('expense-amount').value;
+        
+        let isValid = true;
+        let message = '';
+        
+        if (!name) {
+            isValid = false;
+            message = 'Please enter a description for the expense.';
+        } else if (!amount || parseFloat(amount) <= 0) {
+            isValid = false;
+            message = 'Please enter a valid amount greater than 0.';
+        }
+        
+        if (!isValid) {
+            this.showAlert(message, 'error');
+        }
+        
+        return isValid;
+    }
+    
+    // Enhanced add expense with validation
+    handleAddExpense() {
+        if (!this.validateExpenseForm()) {
+            return;
+        }
+        
+        const expenseData = this.getExpenseFormData();
+        
+        // Convert amount to number
+        expenseData.amount = parseFloat(expenseData.amount);
+        
+        // Add the expense
+        const expense = this.expenseManager.addExpense(expenseData);
+        
+        // Save to storage
+        this.storageManager.saveExpenses(this.expenseManager.getExpenses());
+        
+        // Update UI
+        this.updateDashboard();
+        this.renderExpenseTable();
+        this.clearExpenseForm();
+        
+        // Show success message with details
+        const categoryInfo = this.expenseManager.getCategoryInfo(expenseData.category);
+        this.showAlert(
+            `Added ${categoryInfo.icon} ${expenseData.name}: ${this.formatCurrency(expenseData.amount, expenseData.currency)}`,
+            'success'
+        );
+        
+        // Update chart
+        this.updateCharts();
+        
+        // Scroll to the new expense in the table
+        setTimeout(() => {
+            const newRow = document.querySelector(`[data-id="${expense.id}"]`);
+            if (newRow) {
+                newRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                // Highlight the new row
+                newRow.parentElement.classList.add('highlight-new');
+                setTimeout(() => {
+                    newRow.parentElement.classList.remove('highlight-new');
+                }, 2000);
+            }
+        }, 100);
+    }
+    
+    // Enhanced currency rates display
+    async updateCurrencyRates(forceRefresh = false) {
+        try {
+            // Show loading state
+            const ratesGrid = document.getElementById('rates-grid');
+            ratesGrid.innerHTML = '<div class="rate-item loading"><i class="fas fa-spinner fa-spin"></i> Updating rates...</div>';
+            
+            const rates = await this.currencyConverter.getExchangeRates(
+                this.currentBaseCurrency, 
+                forceRefresh
+            );
+            
+            if (rates) {
+                this.renderCurrencyRates(rates);
+                
+                // Update all currency displays
+                this.updateAllCurrencyDisplays();
+            }
+        } catch (error) {
+            console.error('Failed to update currency rates:', error);
+            this.showAlert('Failed to update currency rates. Using cached data.', 'error');
+        }
+    }
+    
+    // Update all currency displays in the app
+    updateAllCurrencyDisplays() {
+        // Update dashboard totals
+        this.updateDashboard();
+        
+        // Update expense table
+        this.renderExpenseTable();
+        
+        // Update charts
+        this.updateCharts();
+    }
+    
+    // Enhanced currency rates rendering
+    renderCurrencyRates(rates) {
+        const ratesGrid = document.getElementById('rates-grid');
+        const baseCurrency = this.currentBaseCurrency;
+        
+        // Clear loading state
+        ratesGrid.innerHTML = '';
+        
+        // Get popular currencies to display (excluding base)
+        const popularCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'INR', 'CHF']
+            .filter(currency => currency !== baseCurrency);
+        
+        // Add rate items
+        popularCurrencies.forEach(currency => {
+            const rate = rates[currency];
+            if (rate) {
+                const rateItem = document.createElement('div');
+                rateItem.className = 'rate-item';
+                
+                // Calculate change from previous rate (simulated for demo)
+                const previousRate = rate * (0.95 + Math.random() * 0.1); // Simulated previous rate
+                const change = ((rate - previousRate) / previousRate) * 100;
+                
+                rateItem.innerHTML = `
+                    <div class="currency-header">
+                        <span class="currency-code">${currency}</span>
+                        <span class="currency-name">${this.currencyConverter.getCurrencyName(currency)}</span>
+                    </div>
+                    <div class="rate">${rate.toFixed(4)}</div>
+                    <div class="change ${change >= 0 ? 'positive' : 'negative'}">
+                        <i class="fas fa-${change >= 0 ? 'arrow-up' : 'arrow-down'}"></i>
+                        ${Math.abs(change).toFixed(2)}%
+                    </div>
+                    <div class="conversion">1 ${baseCurrency} = ${rate.toFixed(2)} ${currency}</div>
+                `;
+                ratesGrid.appendChild(rateItem);
+            }
+        });
+        
+        // Update timestamp
+        const now = new Date();
+        document.getElementById('rates-updated').textContent = 
+            now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('current-base').textContent = baseCurrency;
+    }
+    
+    // Enhanced dashboard with more statistics
+    updateDashboard() {
+        const expenses = this.expenseManager.getExpenses();
+        const baseCurrency = this.currentBaseCurrency;
+        
+        // Calculate total balance
+        const totalBalance = this.expenseManager.getTotalInBaseCurrency(baseCurrency);
+        document.getElementById('total-balance').textContent = 
+            this.formatCurrency(totalBalance, baseCurrency);
+        
+        // Calculate this month's expense
+        const currentMonth = new Date().getMonth();
+        const currentYear = new Date().getFullYear();
+        const monthlyExpenses = this.expenseManager.getMonthlyExpenses(currentYear, currentMonth);
+        
+        const monthlyTotal = monthlyExpenses.reduce((sum, expense) => {
+            return sum + this.currencyConverter.convertToBase(
+                expense.amount, 
+                expense.currency, 
+                baseCurrency
+            );
+        }, 0);
+        
+        document.getElementById('monthly-expense').textContent = 
+            this.formatCurrency(monthlyTotal, baseCurrency);
+        
+        // Calculate this week's expense
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const weeklyExpenses = this.expenseManager.getExpensesByDateRange(oneWeekAgo, new Date());
+        const weeklyTotal = weeklyExpenses.reduce((sum, expense) => {
+            return sum + this.currencyConverter.convertToBase(
+                expense.amount, 
+                expense.currency, 
+                baseCurrency
+            );
+        }, 0);
+        
+        // Add weekly expense to dashboard if element exists
+        const weeklyElement = document.getElementById('weekly-expense');
+        if (!weeklyElement) {
+            // Add weekly stat card to dashboard
+            this.addWeeklyStatCard(weeklyTotal, baseCurrency);
+        } else {
+            weeklyElement.textContent = this.formatCurrency(weeklyTotal, baseCurrency);
+        }
+        
+        // Count unique categories
+        const categories = new Set(expenses.map(expense => expense.category));
+        document.getElementById('category-count').textContent = categories.size;
+        
+        // Count unique currencies
+        const currencies = new Set(expenses.map(expense => expense.currency));
+        currencies.add(baseCurrency);
+        document.getElementById('currency-count').textContent = currencies.size;
+        
+        // Update statistics card if it exists
+        this.updateStatisticsCard();
+    }
+    
+    // Add weekly stat card to dashboard
+    addWeeklyStatCard(weeklyTotal, baseCurrency) {
+        const dashboard = document.querySelector('.dashboard');
+        
+        // Create weekly stat card
+        const weeklyCard = document.createElement('div');
+        weeklyCard.className = 'stats-card weekly-expense';
+        weeklyCard.innerHTML = `
+            <h3><i class="fas fa-calendar-week"></i> This Week</h3>
+            <p id="weekly-expense" class="amount">${this.formatCurrency(weeklyTotal, baseCurrency)}</p>
+            <small>Last 7 days</small>
+        `;
+        
+        // Insert after monthly expense card
+        const monthlyCard = document.querySelector('.monthly-expense');
+        monthlyCard.parentNode.insertBefore(weeklyCard, monthlyCard.nextSibling);
+    }
+    
+    // Add statistics card
+    updateStatisticsCard() {
+        const statistics = this.expenseManager.getStatistics(this.currentBaseCurrency);
+        
+        // Find or create statistics card
+        let statsCard = document.querySelector('.stats-card.statistics');
+        if (!statsCard) {
+            const dashboard = document.querySelector('.dashboard');
+            statsCard = document.createElement('div');
+            statsCard.className = 'stats-card statistics';
+            dashboard.appendChild(statsCard);
+        }
+        
+        statsCard.innerHTML = `
+            <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span>Total Expenses:</span>
+                    <strong>${statistics.totalExpenses}</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Average:</span>
+                    <strong>${this.formatCurrency(statistics.averageExpense, this.currentBaseCurrency)}</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Largest:</span>
+                    <strong>${this.formatCurrency(statistics.largestExpense, this.currentBaseCurrency)}</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Smallest:</span>
+                    <strong>${this.formatCurrency(statistics.smallestExpense, this.currentBaseCurrency)}</strong>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Enhanced expense table with sorting
+    renderExpenseTable() {
+        const tableBody = document.getElementById('expense-table-body');
+        const expenses = this.expenseManager.getExpenses();
+        const baseCurrency = this.currentBaseCurrency;
+        
+        // Apply filters
+        let filteredExpenses = [...expenses];
+        
+        if (this.filters.search) {
+            filteredExpenses = this.expenseManager.searchExpenses(this.filters.search);
+        }
+        
+        if (this.filters.category) {
+            filteredExpenses = filteredExpenses.filter(expense => 
+                expense.category === this.filters.category
+            );
+        }
+        
+        if (this.filters.currency) {
+            filteredExpenses = filteredExpenses.filter(expense => 
+                expense.currency === this.filters.currency
+            );
+        }
+        
+        // Sort by date (newest first)
+        filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Clear table
+        tableBody.innerHTML = '';
+        
+        if (filteredExpenses.length === 0) {
+            tableBody.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="6">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <div>No expenses found. Try adjusting your filters or add a new expense.</div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            // Add expense rows
+            filteredExpenses.forEach(expense => {
+                const baseAmount = this.currencyConverter.convertToBase(
+                    expense.amount, 
+                    expense.currency, 
+                    baseCurrency
+                );
+                
+                const categoryInfo = this.expenseManager.getCategoryInfo(expense.category);
+                
+                const row = document.createElement('tr');
+                row.setAttribute('data-id', expense.id);
+                row.innerHTML = `
+                    <td>
+                        <div class="date-display">
+                            <div class="date-day">${new Date(expense.date).getDate()}</div>
+                            <div class="date-month">${new Date(expense.date).toLocaleDateString('en-US', { month: 'short' })}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="expense-name">${expense.name}</div>
+                        ${expense.notes ? `<small class="expense-notes">${expense.notes}</small>` : ''}
+                        <div class="expense-meta">
+                            <span class="payment-method">${this.getPaymentMethodIcon(expense.paymentMethod)} ${expense.paymentMethod}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="category-tag ${expense.category}" style="background-color: ${categoryInfo.color}20; color: ${categoryInfo.color};">
+                            ${categoryInfo.icon} ${categoryInfo.name}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="original-amount">
+                            <span class="currency-symbol">${this.currencyConverter.getCurrencySymbol(expense.currency)}</span>
+                            ${expense.amount.toFixed(2)}
+                        </div>
+                        <small class="currency-code">${expense.currency}</small>
+                    </td>
+                    <td>
+                        <div class="converted-amount">
+                            ${this.formatCurrency(baseAmount, baseCurrency)}
+                        </div>
+                        <small class="conversion-rate">1 ${expense.currency} = ${(baseAmount / expense.amount).toFixed(4)} ${baseCurrency}</small>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon edit-expense" data-id="${expense.id}" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon duplicate-expense" data-id="${expense.id}" title="Duplicate">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="btn-icon delete-expense" data-id="${expense.id}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for action buttons
+            this.addExpenseRowEventListeners();
+        }
+        
+        // Update summary
+        this.updateTableSummary(filteredExpenses);
+    }
+    
+    // Enhanced row event listeners
+    addExpenseRowEventListeners() {
+        // Edit buttons
+        document.querySelectorAll('.edit-expense').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const expenseId = e.currentTarget.getAttribute('data-id');
+                this.handleEditExpense(expenseId);
+            });
+        });
+        
+        // Duplicate buttons
+        document.querySelectorAll('.duplicate-expense').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const expenseId = e.currentTarget.getAttribute('data-id');
+                this.handleDuplicateExpense(expenseId);
+            });
+        });
+        
+        // Delete buttons
+        document.querySelectorAll('.delete-expense').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const expenseId = e.currentTarget.getAttribute('data-id');
+                this.handleDeleteExpense(expenseId);
+            });
+        });
+        
+        // Make rows clickable for quick edit
+        document.querySelectorAll('#expense-table-body tr[data-id]').forEach(row => {
+            row.addEventListener('dblclick', (e) => {
+                if (!e.target.closest('.action-buttons')) {
+                    const expenseId = row.getAttribute('data-id');
+                    this.handleEditExpense(expenseId);
+                }
+            });
+        });
+    }
+    
+    // Handle duplicate expense
+    handleDuplicateExpense(expenseId) {
+        const expense = this.expenseManager.getExpense(expenseId);
+        if (!expense) return;
+        
+        // Create a copy with "Copy" in the name
+        const duplicate = {
+            ...expense,
+            name: `${expense.name} (Copy)`,
+            id: undefined // Let the manager assign a new ID
+        };
+        
+        delete duplicate.id;
+        delete duplicate.createdAt;
+        delete duplicate.updatedAt;
+        
+        const newExpense = this.expenseManager.addExpense(duplicate);
+        
+        // Save to storage
+        this.storageManager.saveExpenses(this.expenseManager.getExpenses());
+        
+        // Update UI
+        this.updateDashboard();
+        this.renderExpenseTable();
+        
+        this.showAlert(`Duplicated expense: ${expense.name}`, 'success');
+        this.updateCharts();
+    }
+    
+    // Enhanced export with multiple formats
+    async handleExportData() {
+        const expenses = this.expenseManager.getExpenses();
+        const settings = this.storageManager.loadSettings();
+        
+        // Ask for format
+        const format = await this.showExportFormatDialog();
+        if (!format) return;
+        
+        let dataStr, mimeType, extension;
+        
+        if (format === 'json') {
+            const data = {
+                version: '1.0',
+                exportedAt: new Date().toISOString(),
+                expenses: expenses,
+                settings: settings,
+                metadata: {
+                    totalExpenses: expenses.length,
+                    totalValue: this.expenseManager.getTotalInBaseCurrency(this.currentBaseCurrency),
+                    baseCurrency: this.currentBaseCurrency
+                }
+            };
+            dataStr = JSON.stringify(data, null, 2);
+            mimeType = 'application/json';
+            extension = 'json';
+        } else if (format === 'csv') {
+            // Convert to CSV
+            const headers = ['Date', 'Description', 'Category', 'Amount', 'Currency', 'Payment Method', 'Notes'];
+            const rows = expenses.map(expense => [
+                expense.date,
+                `"${expense.name.replace(/"/g, '""')}"`,
+                expense.category,
+                expense.amount,
+                expense.currency,
+                expense.paymentMethod,
+                `"${(expense.notes || '').replace(/"/g, '""')}"`
+            ]);
+            
+            dataStr = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            mimeType = 'text/csv';
+            extension = 'csv';
+        }
+        
+        const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
+        const exportFileDefaultName = `expense-tracker-export-${new Date().toISOString().split('T')[0]}.${extension}`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+        
+        this.showAlert(`Data exported as ${format.toUpperCase()} successfully!`, 'success');
+    }
+    
+    // Show export format dialog
+    showExportFormatDialog() {
+        return new Promise((resolve) => {
+            const dialog = document.createElement('div');
+            dialog.className = 'modal-overlay';
+            dialog.innerHTML = `
+                <div class="modal">
+                    <h3>Export Data</h3>
+                    <p>Choose export format:</p>
+                    <div class="modal-buttons">
+                        <button class="btn btn-primary export-json">JSON</button>
+                        <button class="btn btn-primary export-csv">CSV</button>
+                        <button class="btn btn-secondary cancel-export">Cancel</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
+            
+            // Add event listeners
+            dialog.querySelector('.export-json').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('json');
+            });
+            
+            dialog.querySelector('.export-csv').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('csv');
+            });
+            
+            dialog.querySelector('.cancel-export').addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve(null);
+            });
+            
+            // Close on overlay click
+            dialog.addEventListener('click', (e) => {
+                if (e.target === dialog) {
+                    document.body.removeChild(dialog);
+                    resolve(null);
+                }
+            });
+        });
+    }
+    
+    // Helper method for payment method icons
+    getPaymentMethodIcon(method) {
+        const icons = {
+            'cash': '💵',
+            'credit': '💳',
+            'debit': '🏦',
+            'digital': '📱',
+            'other': '🔄'
+        };
+        return icons[method] || '💰';
+    }
