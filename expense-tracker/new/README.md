@@ -35,22 +35,20 @@ A sophisticated web-based expense tracker that allows users to manage their expe
 - **ExchangeRate-API**: Currency conversion rates
 
 ## Project Structure
-expense-tracker/
-├── index.html # Main HTML file
-├── css/
-│ ├── style.css # Main styles
-│ └── theme.css # Theme styles
-├── js/
-│ ├── main.js # Application initialization
-│ ├── expenseManager.js # Expense CRUD operations
-│ ├── currencyConverter.js # Currency conversion logic
-│ ├── chartManager.js # Chart rendering
-│ └── storageManager.js # Data persistence
-├── assets/
-│ └── icons/ # App icons
-└── README.md # Documentation
-
-text
+- expense-tracker/
+- ├── index.html # Main HTML file
+- ├── css/
+- │ ├── style.css # Main styles
+- │ └── theme.css # Theme styles
+- ├── js/
+- │ ├── main.js # Application initialization
+- │ ├── expenseManager.js # Expense CRUD operations
+- │ ├── currencyConverter.js # Currency conversion logic
+- │ ├── chartManager.js # Chart rendering
+- │ └── storageManager.js # Data persistence
+- ├── assets/
+- │ └── icons/ # App icons
+- └── README.md # Documentation
 
 ## Setup and Installation
 
