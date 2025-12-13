@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Expense Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Simple CSS */
+        :root {
+            --primary: #4361ee;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #212529;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --text: #e0e0e0;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .card {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: var(--card);
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-wallet"></i> Simple Expense Tracker</h1>
+            <button id="theme-toggle">
+                <i class="fas fa-moon"></i> Theme
+            </button>
+        </header>
+        
+        <div class="card">
+            <h2>Add Expense</h2>
+            <input type="text" id="expense-name" placeholder="Description">
+            <input type="number" id="expense-amount" placeholder="Amount">
+            <select id="expense-currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+            </select>
+            <button onclick="addExpense()">Add Expense</button>
+        </div>
+        
+        <div class="card">
+            <h2>Expenses</h2>
+            <div id="expense-list"></div>
+        </div>
+        
+        <div class="card">
+            <h2>Debug Info</h2>
+            <div id="debug"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simple expense tracker
+        let expenses = [];
+        
+        function addExpense() {
+            const name = document.getElementById('expense-name').value;
+            const amount = document.getElementById('expense-amount').value;
+            const currency = document.getElementById('expense-currency').value;
+            
+            if (!name || !amount) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now(),
+                name: name,
+                amount: parseFloat(amount),
+                currency: currency,
+                date: new Date().toLocaleDateString()
+            };
+            
+            expenses.push(expense);
+            updateExpenseList();
+            
+            // Clear form
+            document.getElementById('expense-name').value = '';
+            document.getElementById('expense-amount').value = '';
+            
+            updateDebug();
+        }
+        
+        function updateExpenseList() {
+            const list = document.getElementById('expense-list');
+            list.innerHTML = '';
+            
+            if (expenses.length === 0) {
+                list.innerHTML = '<p>No expenses yet</p>';
+                return;
+            }
+            
+            expenses.forEach(expense => {
+                const div = document.createElement('div');
+                div.style.cssText = `
+                    padding: 10px;
+                    border-bottom: 1px solid #eee;
+                    display: flex;
+                    justify-content: space-between;
+                `;
+                div.innerHTML = `
+                    <div>
+                        <strong>${expense.name}</strong><br>
+                        <small>${expense.date}</small>
+                    </div>
+                    <div>
+                        ${expense.amount} ${expense.currency}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+        
+        function updateDebug() {
+            const debug = document.getElementById('debug');
+            debug.innerHTML = `
+                <p>Total expenses: ${expenses.length}</p>
+                <p>Total amount: ${expenses.reduce((sum, exp) => sum + exp.amount, 0).toFixed(2)}</p>
+                <p>Theme: ${document.documentElement.getAttribute('data-theme')}</p>
+            `;
+        }
+        
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            
+            const icon = this.querySelector('i');
+            icon.className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            
+            localStorage.setItem('expense-tracker-theme', newTheme);
+            updateDebug();
+        });
+        
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            // Load theme
+            const savedTheme = localStorage.getItem('expense-tracker-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const icon = document.querySelector('#theme-toggle i');
+            if (icon) {
+                icon.className = savedTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+            
+            updateDebug();
+            console.log('Simple expense tracker loaded');
+        });
+    </script>
+</body>
+</html>
