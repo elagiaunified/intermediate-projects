@@ -116,5 +116,19 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 [View Live Demo on GitHub Pages](#) <!-- Add your GitHub Pages link here -->
 
 ---
+## API Configuration
 
+This app uses ExchangeRate-API for currency conversion. To get real-time exchange rates:
+
+1. Go to [ExchangeRate-API](https://www.exchangerate-api.com)
+2. Sign up for a free account (1,500 requests/month)
+3. Get your API key
+4. Replace `YOUR_API_KEY` in `js/currencyConverter.js` with your actual key:
+
+```javascript
+// In js/currencyConverter.js
+this.apiKey = 'your-actual-api-key-here';
+```
+
+**Note**: The app includes fallback exchange rates, so it will work without an API key, but rates won't be updated automatically.
 **Note**: This application stores all data locally in your browser. Clearing browser data will delete your expenses.
