@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Class Only</title>
+</head>
+<body>
+    <h1>Testing Class Definition</h1>
+    <div id="output" style="padding: 20px; background: #f5f5f5; margin: 20px;"></div>
+    
+    <script>
+        console.log('=== STARTING CLASS TEST ===');
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.style.cssText = `margin: 5px 0; padding: 5px; color: ${type === 'error' ? 'red' : type === 'success' ? 'green' : 'black'}`;
+            div.textContent = message;
+            output.appendChild(div);
+            console.log(message);
+        }
+        
+        // Test 1: Try defining StorageManager exactly as in our file
+        log('Test 1: Defining StorageManager...');
+        try {
+            class StorageManager {
+                constructor() {
+                    this.storageKey = 'expense-tracker-data';
+                    this.settingsKey = 'expense-tracker-settings';
+                }
+                
+                saveExpenses(expenses) {
+                    try {
+                        localStorage.setItem(this.storageKey, JSON.stringify(expenses));
+                        return true;
+                    } catch (error) {
+                        console.error('Failed to save expenses:', error);
+                        return false;
+                    }
+                }
+                
+                loadExpenses() {
+                    try {
+                        const data = localStorage.getItem(this.storageKey);
+                        return data ? JSON.parse(data) : [];
+                    } catch (error) {
+                        console.error('Failed to load expenses:', error);
+                        return [];
+                    }
+                }
+            }
+            
+            log('✅ StorageManager class defined', 'success');
+            
+            // Try to create an instance
+            const storage = new StorageManager();
+            log('✅ StorageManager instance created', 'success');
+            
+        } catch (error) {
+            log(`❌ StorageManager failed: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        // Test 2: Try defining ExpenseManager
+        log('\nTest 2: Defining ExpenseManager...');
+        try {
+            class ExpenseManager {
+                constructor() {
+                    this.expenses = [];
+                    this.nextId = 1;
+                }
+                
+                setExpenses(expenses) {
+                    this.expenses = expenses || [];
+                    const maxId = this.expenses.reduce((max, expense) => 
+                        Math.max(max, expense.id || 0), 0);
+                    this.nextId = maxId + 1;
+                }
+                
+                getExpenses() {
+                    return [...this.expenses];
+                }
+                
+                addExpense(expenseData) {
+                    const expense = {
+                        id: this.nextId++,
+                        ...expenseData,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    this.expenses.push(expense);
+                    return expense;
+                }
+            }
+            
+            log('✅ ExpenseManager class defined', 'success');
+            
+            // Try to create an instance
+            const expenseMgr = new ExpenseManager();
+            log('✅ ExpenseManager instance created', 'success');
+            
+        } catch (error) {
+            log(`❌ ExpenseManager failed: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        // Test 3: Try defining CurrencyConverter
+        log('\nTest 3: Defining CurrencyConverter...');
+        try {
+            class CurrencyConverter {
+                constructor() {
+                    this.apiKey = 'demo-key-123';
+                    this.apiUrl = 'https://api.exchangerate-api.com/v4/latest/';
+                    this.cacheKey = 'expense-tracker-currency-rates';
+                    this.cacheDuration = 3600000;
+                    
+                    this.fallbackRates = {
+                        USD: { USD: 1, EUR: 0.92, GBP: 0.79 },
+                        EUR: { USD: 1.09, EUR: 1, GBP: 0.86 },
+                        GBP: { USD: 1.27, EUR: 1.16, GBP: 1 }
+                    };
+                }
+                
+                async getExchangeRates(baseCurrency = 'USD') {
+                    try {
+                        const response = await fetch(`${this.apiUrl}${baseCurrency}`);
+                        const data = await response.json();
+                        return data.rates || this.fallbackRates[baseCurrency];
+                    } catch (error) {
+                        return this.fallbackRates[baseCurrency] || this.fallbackRates.USD;
+                    }
+                }
+            }
+            
+            log('✅ CurrencyConverter class defined', 'success');
+            
+            // Try to create an instance
+            const converter = new CurrencyConverter();
+            log('✅ CurrencyConverter instance created', 'success');
+            
+        } catch (error) {
+            log(`❌ CurrencyConverter failed: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        // Test 4: Try defining ChartManager
+        log('\nTest 4: Defining ChartManager...');
+        try {
+            class ChartManager {
+                constructor() {
+                    this.categoryChart = null;
+                }
+                
+                init() {
+                    console.log('ChartManager initialized');
+                }
+            }
+            
+            log('✅ ChartManager class defined', 'success');
+            
+            // Try to create an instance
+            const chartMgr = new ChartManager();
+            log('✅ ChartManager instance created', 'success');
+            
+        } catch (error) {
+            log(`❌ ChartManager failed: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        // Test 5: Try defining ExpenseTrackerApp
+        log('\nTest 5: Defining ExpenseTrackerApp...');
+        try {
+            class ExpenseTrackerApp {
+                constructor() {
+                    console.log('ExpenseTrackerApp constructor called');
+                    this.expenseManager = new ExpenseManager();
+                    this.currencyConverter = new CurrencyConverter();
+                    this.chartManager = new ChartManager();
+                    this.storageManager = new StorageManager();
+                    this.currentBaseCurrency = 'USD';
+                    
+                    this.init();
+                }
+                
+                init() {
+                    console.log('App initialized');
+                }
+            }
+            
+            log('✅ ExpenseTrackerApp class defined', 'success');
+            
+            // Try to create an instance
+            const app = new ExpenseTrackerApp();
+            log('✅ ExpenseTrackerApp instance created', 'success');
+            
+        } catch (error) {
+            log(`❌ ExpenseTrackerApp failed: ${error.message}`, 'error');
+            log(`Stack: ${error.stack}`, 'error');
+        }
+        
+        log('\n=== ALL TESTS COMPLETE ===');
+    </script>
+</body>
+</html>
