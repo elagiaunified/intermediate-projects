@@ -1,3 +1,119 @@
+// js/main.js - Add debug mode
+console.log('=== Expense Tracker Debug Mode ===');
+
+// Check if dependencies are loaded
+console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+console.log('StorageManager:', typeof StorageManager !== 'undefined');
+console.log('CurrencyConverter:', typeof CurrencyConverter !== 'undefined');
+console.log('ExpenseManager:', typeof ExpenseManager !== 'undefined');
+console.log('ChartManager:', typeof ChartManager !== 'undefined');
+
+class ExpenseTrackerApp {
+    constructor() {
+        console.log('ExpenseTrackerApp constructor called');
+        
+        // Check for missing dependencies
+        if (typeof StorageManager === 'undefined') {
+            console.error('StorageManager is not defined!');
+            this.showCriticalError('StorageManager failed to load. Please refresh the page.');
+            return;
+        }
+        
+        if (typeof CurrencyConverter === 'undefined') {
+            console.warn('CurrencyConverter not defined, using fallback');
+        }
+        
+        if (typeof ExpenseManager === 'undefined') {
+            console.error('ExpenseManager is not defined!');
+            this.showCriticalError('ExpenseManager failed to load. Please refresh the page.');
+            return;
+        }
+        
+        // Initialize managers with error handling
+        try {
+            this.expenseManager = new ExpenseManager();
+            this.currencyConverter = new CurrencyConverter();
+            this.chartManager = new ChartManager();
+            this.storageManager = new StorageManager();
+            
+            console.log('All managers initialized successfully');
+        } catch (error) {
+            console.error('Error initializing managers:', error);
+            this.showCriticalError('Failed to initialize application: ' + error.message);
+            return;
+        }
+        
+        // State
+        this.currentBaseCurrency = 'USD';
+        this.filters = {
+            search: '',
+            category: '',
+            currency: ''
+        };
+        
+        // Initialize the app
+        try {
+            this.init();
+        } catch (error) {
+            console.error('Error in app initialization:', error);
+            this.showCriticalError('App initialization failed: ' + error.message);
+        }
+    }
+    
+    showCriticalError(message) {
+        // Create error overlay
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        `;
+        
+        errorDiv.innerHTML = `
+            <h1 style="color: #ff6b6b; margin-bottom: 20px;">⚠️ Application Error</h1>
+            <p style="margin-bottom: 20px; font-size: 18px;">${message}</p>
+            <p style="margin-bottom: 30px; color: #aaa;">Check the browser console (F12) for details</p>
+            <div>
+                <button onclick="location.reload()" style="
+                    padding: 10px 30px;
+                    background: #4361ee;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin: 5px;
+                ">Refresh Page</button>
+                <button onclick="localStorage.clear(); location.reload()" style="
+                    padding: 10px 30px;
+                    background: #ff6b6b;
+                    color: white;
+                    border: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin: 5px;
+                ">Clear Data & Refresh</button>
+            </div>
+        `;
+        
+        document.body.appendChild(errorDiv);
+    }
+    
+    // ... rest of the class remains the same ...
+    
 // js/main.js - Main application initialization and coordination
 
 class ExpenseTrackerApp {
