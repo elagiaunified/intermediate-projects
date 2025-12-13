@@ -282,10 +282,64 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/storageManager.js"></script>
-    <script src="js/currencyConverter.js"></script>
-    <script src="js/expenseManager.js"></script>
-    <script src="js/chartManager.js"></script>
-    <script src="js/main.js"></script>
+ <!-- Load our scripts with error handling -->
+    <script>
+        // Load JavaScript files with error handling
+        function loadScript(src, onSuccess, onError) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = onSuccess;
+            script.onerror = onError || function() {
+                console.error('Failed to load script:', src);
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Load scripts in correct order
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting script loading...');
+            
+            // Load scripts sequentially
+            const scripts = [
+                'js/storageManager.js',
+                'js/currencyConverter.js',
+                'js/expenseManager.js',
+                'js/chartManager.js',
+                'js/main.js'
+            ];
+            
+            let currentIndex = 0;
+            
+            function loadNextScript() {
+                if (currentIndex >= scripts.length) {
+                    console.log('All scripts loaded, initializing app...');
+                    // Initialize the app
+                    if (typeof ExpenseTrackerApp !== 'undefined') {
+                        window.app = new ExpenseTrackerApp();
+                        console.log('App initialized successfully!');
+                    } else {
+                        console.error('ExpenseTrackerApp not defined!');
+                    }
+                    return;
+                }
+                
+                const script = scripts[currentIndex];
+                console.log('Loading:', script);
+                
+                loadScript(script, function() {
+                    console.log('Successfully loaded:', script);
+                    currentIndex++;
+                    loadNextScript();
+                }, function() {
+                    console.error('Failed to load:', script);
+                    currentIndex++;
+                    loadNextScript(); // Continue anyway
+                });
+            }
+            
+            loadNextScript();
+        });
+    </script>
+
 </body>
 </html>
