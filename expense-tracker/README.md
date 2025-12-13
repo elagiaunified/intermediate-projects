@@ -1,7 +1,7 @@
 ## 💰 Smart Expense Tracker
 A comprehensive multi-currency expense tracking application with real-time exchange rates, interactive charts, and budget management. Track your finances across 50+ currencies with automatic currency detection.
 
-(https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-ExchangeRate--API-orange) (https://img.shields.io/badge/Features-Multi--Currency/Charts/Budgeting-green) (https://img.shields.io/badge/License-MIT-yellow)
+![Expense Tracker Preview](https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-ExchangeRate--API-orange) ![Multi-Currency](https://img.shields.io/badge/Features-Multi--Currency/Charts/Budgeting-green)
 
 ![Recipe Finder Preview](https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-TheMealDB-orange)
 🚀 Live Demo
