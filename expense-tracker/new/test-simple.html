@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Script Loading</title>
+</head>
+<body>
+    <h1>Testing Script Loading</h1>
+    <div id="results"></div>
+    
+    <script>
+        function testScript(scriptName) {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = scriptName;
+                script.onload = () => resolve({ name: scriptName, success: true });
+                script.onerror = () => resolve({ name: scriptName, success: false });
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function runTests() {
+            const scripts = [
+                'js/storageManager.js',
+                'js/currencyConverter.js',
+                'js/expenseManager.js',
+                'js/chartManager.js',
+                'js/main.js'
+            ];
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Test Results:</h2>';
+            
+            for (const script of scripts) {
+                const result = await testScript(script);
+                const div = document.createElement('div');
+                div.style.cssText = result.success 
+                    ? 'color: green; padding: 5px;'
+                    : 'color: red; padding: 5px; font-weight: bold;';
+                div.textContent = result.success 
+                    ? `✅ ${script} loaded successfully`
+                    : `❌ ${script} failed to load`;
+                results.appendChild(div);
+            }
+            
+            // Test if classes are defined
+            const classes = ['StorageManager', 'CurrencyConverter', 'ExpenseManager', 'ChartManager', 'ExpenseTrackerApp'];
