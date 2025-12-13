@@ -1,4 +1,4 @@
-💰 Smart Expense Tracker
+## 💰 Smart Expense Tracker
 A comprehensive multi-currency expense tracking application with real-time exchange rates, interactive charts, and budget management. Track your finances across 50+ currencies with automatic currency detection.
 
 https://img.shields.io/badge/Status-Complete-success https://img.shields.io/badge/Tech-HTML/CSS/JS-blue https://img.shields.io/badge/API-ExchangeRate--API-orange https://img.shields.io/badge/Features-Multi--Currency/Charts/Budgeting-green https://img.shields.io/badge/License-MIT-yellow
@@ -6,8 +6,8 @@ https://img.shields.io/badge/Status-Complete-success https://img.shields.io/badg
 🚀 Live Demo
 Try it here!
 
-✨ Features
-🌍 Multi-Currency Support
+## ✨ Features
+## 🌍 Multi-Currency Support
 Automatic Currency Detection: Detects user's currency based on location/browser
 
 50+ World Currencies: USD, EUR, GBP, JPY, CAD, AUD, CNY, INR, BRL, ZAR, and more
@@ -18,7 +18,7 @@ Automatic Conversion: All transactions converted to your base currency
 
 Built-in Currency Converter: Instant conversion between any currencies
 
-📊 Financial Tracking
+## 📊 Financial Tracking
 Expense & Income Tracking: Log transactions in any currency
 
 Smart Categorization: 10+ categories with custom icons
@@ -29,7 +29,7 @@ Tag System: Add custom tags for better organization
 
 Search & Filter: Find transactions by date, category, or description
 
-📈 Data Visualization
+## 📈 Data Visualization
 Balance Trend Chart: Visualize your financial progress over time
 
 Expense Categories: Doughnut chart showing spending distribution
@@ -38,7 +38,7 @@ Income vs Expenses: Bar chart comparing earnings and spending
 
 Budget Progress Bars: Visual indicators for budget tracking
 
-💡 Budget Management
+## 💡 Budget Management
 Category-based Budgets: Set budgets for specific spending categories
 
 Progress Tracking: Visual progress bars with color-coded warnings
@@ -47,7 +47,7 @@ Budget Periods: Monthly, weekly, or yearly budget cycles
 
 Overspending Alerts: Notifications when approaching budget limits
 
-🔧 Advanced Features
+## 🔧 Advanced Features
 Financial Insights: AI-generated insights based on your spending patterns
 
 Data Export: Export to CSV, JSON, or generate PDF reports
@@ -58,11 +58,12 @@ Responsive Design: Perfect experience on desktop, tablet, and mobile
 
 Dark/Light Theme: Professional color scheme with great contrast
 
-📸 Screenshots
+## 📸 Screenshots
 Desktop Dashboard	Mobile View	Currency Converter
 https://via.placeholder.com/800x450/434343/ffffff?text=Expense+Tracker+Dashboard	https://via.placeholder.com/400x700/000000/ffffff?text=Mobile+View	https://via.placeholder.com/800x450/00b09b/ffffff?text=Currency+Converter
-🎯 How to Use
-Getting Started
+
+## 🎯 How to Use
+### Getting Started
 Visit the live demo or open index.html locally
 
 Currency will auto-detect based on your location
@@ -71,7 +72,7 @@ Or manually select your preferred base currency
 
 Start adding transactions in any currency
 
-Adding Transactions
+### Adding Transactions
 Click "Add New Transaction" section
 
 Select Type: Expense (red) or Income (green)
@@ -84,7 +85,7 @@ Add Description and optional tags
 
 Click "Add Transaction" to save
 
-Managing Budgets
+### Managing Budgets
 Click "Add Budget" in Budget Management section
 
 Select Category you want to budget for
@@ -95,7 +96,7 @@ Choose Period (Monthly, Weekly, Yearly)
 
 Track progress with visual indicators
 
-Using Charts & Analytics
+### Using Charts & Analytics
 Toggle Time Range: Change view (Week, Month, Quarter, Year, All Time)
 
 Hover Charts: See detailed values on hover
@@ -104,7 +105,7 @@ Filter Categories: Click on chart segments to filter transactions
 
 Export Data: Download your financial data for analysis
 
-Currency Features
+### Currency Features
 Auto-detect: App automatically suggests your local currency
 
 Converter Tool: Convert between any currencies instantly
@@ -113,14 +114,15 @@ Exchange Rates: View live rates for popular currencies
 
 Update Rates: Manually refresh exchange rates
 
-🏗️ Project Structure
+## 🏗️ Project Structure
 text
 expense-tracker/
 ├── index.html          # Main application interface
 ├── style.css           # Styling, layouts, animations
 ├── script.js           # Core logic, API calls, features
 └── README.md           # This documentation
-🔧 Technical Implementation
+
+## 🔧 Technical Implementation
 API Integration
 Uses ExchangeRate-API (free tier, no API key required for basic usage):
 
@@ -211,7 +213,7 @@ Brazilian Real	BRL	R$	Brazil
 South African Rand	ZAR	R	South Africa
 Total: 50+ currencies supported via ExchangeRate-API
 
-📱 Responsive Design
+## 📱 Responsive Design
 Breakpoints & Layouts
 Desktop (≥1200px): Full dashboard with side-by-side charts
 
@@ -237,7 +239,7 @@ High Contrast: WCAG AA compliant color scheme
 
 Focus Indicators: Clear visual focus states
 
-🧪 Testing
+## 🧪 Testing
 Test Coverage
 ✅ Currency conversion accuracy
 
@@ -281,7 +283,7 @@ Timezone differences
 
 Daylight saving time
 
-🚀 Running Locally
+## 🚀 Running Locally
 Quick Start
 bash
 # Clone the repository
@@ -315,7 +317,7 @@ Basic understanding of JavaScript
 
 Internet connection (for exchange rates)
 
-📝 Code Architecture
+## 📝 Code Architecture
 Main Application Class
 javascript
 class ExpenseTracker {
@@ -350,7 +352,7 @@ Storage Manager: LocalStorage operations
 
 UI Manager: DOM updates and event handling
 
-🔄 Future Enhancements
+## 🔄 Future Enhancements
 Planned Features
 Bank Integration: Connect to bank accounts via Plaid API
 
@@ -394,7 +396,7 @@ Cryptocurrency Support: BTC, ETH, and other crypto rates
 
 Currency Forecasts: Predictive exchange rate analytics
 
-📚 What I Learned
+## 📚 What I Learned
 Financial Technology
 Exchange Rate APIs: Consuming and caching financial data
 
@@ -431,7 +433,7 @@ DOM Optimization: Efficient updates for financial data
 
 Bundle Optimization: Minimal footprint for faster loading
 
-🤝 Contributing
+## 🤝 Contributing
 We welcome contributions from the community! Here's how you can help:
 
 Reporting Issues
@@ -484,7 +486,7 @@ Performance optimizations
 
 Test coverage improvements
 
-📄 License
+## 📄 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 Third-Party Licenses
@@ -496,7 +498,7 @@ Font Awesome: CC BY 4.0 License
 
 Google Fonts: Open Font License
 
-👨‍💻 Author
+## 👨‍💻 Author
 Your Name
 
 GitHub: @yourusername
@@ -507,7 +509,7 @@ LinkedIn: Your Profile
 
 Twitter: @yourhandle
 
-🙏 Acknowledgments
+## 🙏 Acknowledgments
 APIs & Services
 ExchangeRate-API for providing free currency exchange rates
 
@@ -533,7 +535,7 @@ Special thanks to beta testers for valuable feedback
 
 Community members for feature suggestions
 
-🔗 Related Projects
+## 🔗 Related Projects
 Weather App - Real-time weather forecasts with geolocation
 
 Recipe Finder - Recipe search with meal planning
@@ -542,7 +544,7 @@ Blog CMS - Content management system (Coming Soon)
 
 Chat App - Real-time messaging (Coming Soon)
 
-⭐ Support
+## ⭐ Support
 If you find this expense tracker useful, please:
 
 Star the repository on GitHub
@@ -555,7 +557,7 @@ Contribute features or improvements
 
 Follow the author for more projects
 
-📞 Support & Questions
+## 📞 Support & Questions
 For support or questions:
 
 Check the Issues for existing discussions
@@ -564,9 +566,9 @@ Create a new issue for bugs or feature requests
 
 Email the author for direct inquiries
 
-🌟 Star History
+## 🌟 Star History
 https://api.star-history.com/svg?repos=yourusername/intermediate-projects&type=Date
 
-💡 Pro Tip: Use this expense tracker consistently for 30 days to get meaningful insights into your spending habits!
+## 💡 Pro Tip: Use this expense tracker consistently for 30 days to get meaningful insights into your spending habits!
 
 Part of the Intermediate Web Development Projects collection. Building real-world applications to level up your skills.
