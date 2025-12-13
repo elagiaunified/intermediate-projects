@@ -56,7 +56,6 @@ class StorageManager {
             expenses: this.loadExpenses(),
             settings: this.loadSettings()
         };
-        
         return JSON.stringify(data, null, 2);
     }
     
@@ -97,22 +96,6 @@ class StorageManager {
         } catch (error) {
             console.error('localStorage is not available:', error);
             return false;
-        }
-    }
-    
-    // Get storage usage
-    getStorageUsage() {
-        try {
-            let total = 0;
-            for (let key in localStorage) {
-                if (localStorage.hasOwnProperty(key)) {
-                    total += localStorage[key].length * 2; // Approximate size in bytes
-                }
-            }
-            return total;
-        } catch (error) {
-            console.error('Failed to calculate storage usage:', error);
-            return 0;
         }
     }
 }
