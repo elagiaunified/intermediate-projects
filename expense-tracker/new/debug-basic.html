@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Debug</title>
+</head>
+<body>
+    <h1>Basic JavaScript Test</h1>
+    
+    <button onclick="runTest()">Run Test</button>
+    <div id="output" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+    
+    <script>
+        // SIMPLEST POSSIBLE TEST
+        console.log('Script starting...');
+        
+        function runTest() {
+            console.log('Button clicked');
+            const output = document.getElementById('output');
+            
+            try {
+                // Test 1: Basic JavaScript
+                output.innerHTML = '<h3>Test Results:</h3>';
+                
+                // Test 2: Create a simple class
+                class SimpleClass {
+                    constructor() {
+                        this.name = 'Test';
+                    }
+                }
+                
+                // Test 3: Create instance
+                const instance = new SimpleClass();
+                
+                output.innerHTML += '<div style="color: green;">✅ Basic JavaScript works</div>';
+                output.innerHTML += `<div style="color: green;">✅ Class created: ${instance.name}</div>`;
+                
+                // Test 4: Try localStorage
+                try {
+                    localStorage.setItem('test', 'value');
+                    const val = localStorage.getItem('test');
+                    output.innerHTML += `<div style="color: green;">✅ localStorage works: ${val}</div>`;
+                } catch (e) {
+                    output.innerHTML += `<div style="color: orange;">⚠️ localStorage error: ${e.message}</div>`;
+                }
+                
+            } catch (error) {
+                output.innerHTML += `<div style="color: red;">❌ ERROR: ${error.message}</div>`;
+                console.error('Test error:', error);
+            }
+        }
+        
+        // Auto-run test
+        setTimeout(runTest, 500);
+    </script>
+</body>
+</html>
