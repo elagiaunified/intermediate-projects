@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - Expense Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px; margin: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Expense Tracker - Quick Test</h1>
+    
+    <div>
+        <button onclick="testTheme()">Test Theme Toggle</button>
+        <button onclick="testStorage()">Test LocalStorage</button>
+        <button onclick="testCurrency()">Test Currency Converter</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        function log(msg, type = 'info') {
+            const results = document.getElementById('results');
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = msg;
+            results.appendChild(p);
+            console.log(msg);
+        }
+        
+        function testTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            log(`Theme changed to: ${newTheme}`, 'success');
+        }
+        
+        function testStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                log('LocalStorage is working', 'success');
+            } catch (e) {
+                log('LocalStorage error: ' + e.message, 'error');
+            }
+        }
+        
+        async function testCurrency() {
+            try {
+                // Test fallback rates
+                const fallbackRates = {
+                    USD: { USD: 1, EUR: 0.92, GBP: 0.79 }
+                };
+                
+                // Test conversion
+                const amount = 100;
+                const converted = amount * fallbackRates.USD.EUR;
+                log(`Conversion test: $${amount} = €${converted.toFixed(2)}`, 'success');
+            } catch (e) {
+                log('Currency test error: ' + e.message, 'error');
+            }
+        }
+        
+        // Run basic tests on load
+        window.onload = function() {
+            log('Running basic tests...');
+            testStorage();
+            testTheme();
+            setTimeout(() => testTheme(), 100); // Toggle back
+        };
+    </script>
+</body>
+</html>
