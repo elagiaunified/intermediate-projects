@@ -1,6 +1,6 @@
 // js/main.js - Main application
 
-class ExpenseTrackerApp {
+window.ExpenseTrackerApp = class ExpenseTrackerApp {
     constructor() {
         console.log('Creating ExpenseTrackerApp');
         
