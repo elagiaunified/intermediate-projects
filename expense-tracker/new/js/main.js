@@ -571,17 +571,32 @@ window.ExpenseTrackerApp = class ExpenseTrackerApp {
     }
     
     formatCurrency(amount, currencyCode) {
+    // Validate amount
+    if (typeof amount !== 'number' || isNaN(amount) || !isFinite(amount)) {
+        console.warn('Invalid amount for formatting:', amount);
+        amount = 0;
+    }
+    
+    try {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currencyCode,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(amount);
+    } catch (error) {
+        console.warn('Intl.NumberFormat failed, using fallback:', error);
+        
+        // Fallback formatting
         try {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: currencyCode,
-                minimumFractionDigits: 2
-            }).format(amount);
-        } catch (error) {
             const symbol = this.currencyConverter.getCurrencySymbol(currencyCode);
             return `${symbol}${amount.toFixed(2)}`;
+        } catch (fallbackError) {
+            console.error('Fallback formatting also failed:', fallbackError);
+            return `₹${amount.toFixed(2)}`; // Hardcoded fallback
         }
     }
+}
     
     formatDate(dateString) {
         const date = new Date(dateString);
