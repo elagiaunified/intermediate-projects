@@ -5,7 +5,7 @@ A professional weather application that provides real-time forecasts, 5-day pred
 ![Weather App Preview](https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-OpenWeatherMap-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 🚀 Live Demo
-**[Try it here!](https://yourusername.github.io/intermediate-projects/weather-app/)**
+**[Try it here!](https://elagiaunified.github.io/intermediate-projects/weather-app/)**
 
 ## ✨ Features
 
