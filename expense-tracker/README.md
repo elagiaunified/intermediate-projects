@@ -325,7 +325,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Google Fonts: Open Font License
 
 ## 👨‍💻 Author
-GitHub: @yourusername
+GitHub: @elagiaunified
 Portfolio: [Coming Soon]
 
 ## 🙏 Acknowledgments
