@@ -1,6 +1,6 @@
 // js/expenseManager.js - Handles expense CRUD operations
 
-class ExpenseManager {
+window.ExpenseManager = class ExpenseManager {
     constructor() {
         this.expenses = [];
         this.nextId = 1;
