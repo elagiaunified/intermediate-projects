@@ -1,6 +1,6 @@
 // js/currencyConverter.js - Handles currency conversion and exchange rates
 
-class CurrencyConverter {
+window.CurrencyConverter = class CurrencyConverter {
     constructor() {
         // Use a free API key or demo key
         this.apiKey = '54e45e46382c7741d4b731af'; // Demo key
