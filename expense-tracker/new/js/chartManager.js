@@ -1,6 +1,6 @@
 // js/chartManager.js - Handles data visualization with Chart.js
 
-class ChartManager {
+window.ChartManager = class ChartManager {
     constructor() {
         this.categoryChart = null;
         this.currentView = 'monthly';
