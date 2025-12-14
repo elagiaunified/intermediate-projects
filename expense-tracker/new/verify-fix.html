@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Fix</title>
+</head>
+<body>
+    <h1>Verifying JavaScript Fix</h1>
+    <div id="results" style="padding: 20px; background: #f5f5f5;"></div>
+    
+    <!-- Load your fixed files -->
+    <script src="js/storageManager.js"></script>
+    <script src="js/currencyConverter.js"></script>
+    <script src="js/expenseManager.js"></script>
+    <script src="js/chartManager.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        setTimeout(() => {
+            const results = document.getElementById('results');
+            const tests = [
+                { name: 'StorageManager', check: window.StorageManager },
+                { name: 'CurrencyConverter', check: window.CurrencyConverter },
+                { name: 'ExpenseManager', check: window.ExpenseManager },
+                { name: 'ChartManager', check: window.ChartManager },
+                { name: 'ExpenseTrackerApp', check: window.ExpenseTrackerApp }
+            ];
+            
+            let html = '<h2>File Check Results:</h2>';
+            let allPassed = true;
+            
+            tests.forEach(test => {
+                const isDefined = typeof test.check === 'function';
+                if (!isDefined) allPassed = false;
+                
+                html += `<div style="color: ${isDefined ? 'green' : 'red'}; margin: 5px;">
+                    ${isDefined ? '✅' : '❌'} ${test.name}: ${isDefined ? 'FOUND on window' : 'NOT FOUND on window'}
+                </div>`;
+            });
+            
+            if (allPassed) {
+                html += '<div style="color: green; margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 5px;">';
+                html += '<strong>🎉 SUCCESS! All classes are now on window object.</strong><br>';
+                html += 'Your main app should now work!';
+                html += '</div>';
+                
+                // Try to create the app
+                try {
+                    const app = new ExpenseTrackerApp();
+                    html += '<div style="color: green; margin-top: 10px;">✅ App instance created successfully!</div>';
+                } catch (error) {
+                    html += `<div style="color: red; margin-top: 10px;">❌ App creation failed: ${error.message}</div>`;
+                }
+            } else {
+                html += '<div style="color: red; margin-top: 20px; padding: 15px; background: #ffebee; border-radius: 5px;">';
+                html += '<strong>❌ Some files are not fixed yet.</strong><br>';
+                html += 'Make sure each JavaScript file starts with "window.ClassName = class ClassName {"';
+                html += '</div>';
+            }
+            
+            results.innerHTML = html;
+        }, 100);
+    </script>
+</body>
+</html>
