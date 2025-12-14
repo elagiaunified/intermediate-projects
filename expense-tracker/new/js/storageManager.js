@@ -1,6 +1,6 @@
 // js/storageManager.js - Handles data persistence using localStorage
 
-class StorageManager {
+window.StorageManager = class StorageManager {
     constructor() {
         this.storageKey = 'expense-tracker-data';
         this.settingsKey = 'expense-tracker-settings';
