@@ -5,7 +5,7 @@ A comprehensive recipe search application with meal planning, favorites system, 
 ![Recipe Finder Preview](https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-TheMealDB-orange) ![Features](https://img.shields.io/badge/Features-Search/Filters/Planning-green)
 
 ## 🚀 Live Demo
-**[Find delicious recipes!](https://yourusername.github.io/intermediate-projects/recipe-finder/)**
+**[Find delicious recipes!](https://elagiaunified.github.io/intermediate-projects/recipe-finder/)**
 
 ## ✨ Features
 
