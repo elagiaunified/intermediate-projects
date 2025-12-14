@@ -101,9 +101,40 @@ window.CurrencyConverter = class CurrencyConverter {
     }
     
     async convertToBase(amount, fromCurrency, baseCurrency) {
-        if (fromCurrency === baseCurrency) {
-            return amount;
+    // Validate inputs
+    if (typeof amount !== 'number' || isNaN(amount)) {
+        console.error('Invalid amount:', amount);
+        return 0;
+    }
+    
+    if (fromCurrency === baseCurrency) {
+        return amount;
+    }
+    
+    try {
+        const rates = await this.getExchangeRates(baseCurrency);
+        
+        // Check if rate exists
+        if (!rates || !rates[fromCurrency]) {
+            console.warn(`No conversion rate for ${fromCurrency} to ${baseCurrency}, using 1:1`);
+            return amount; // Fallback: return original amount
         }
+        
+        const rate = rates[fromCurrency];
+        const converted = amount * rate;
+        
+        // Validate result
+        if (isNaN(converted) || !isFinite(converted)) {
+            console.error('Invalid conversion result:', { amount, rate, converted });
+            return amount; // Fallback
+        }
+        
+        return converted;
+    } catch (error) {
+        console.error('Conversion error:', error);
+        return amount; // Fallback to original amount
+    }
+}
         
         const rates = await this.getExchangeRates(baseCurrency);
         return this.convert(amount, fromCurrency, baseCurrency, rates);
