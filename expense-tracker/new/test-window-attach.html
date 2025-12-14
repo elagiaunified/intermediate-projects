@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Window Attach</title>
+</head>
+<body>
+    <h1>Testing Window Object Attachment</h1>
+    <div id="output" style="padding: 20px; background: #f5f5f5; margin: 20px; font-family: monospace;"></div>
+    
+    <script>
+        console.log('=== WINDOW ATTACH TEST ===');
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.style.cssText = `margin: 5px 0; padding: 5px; color: ${type === 'error' ? 'red' : type === 'success' ? 'green' : 'black'}`;
+            div.textContent = message;
+            output.appendChild(div);
+            console.log(message);
+        }
+        
+        log('Method 1: Define class THEN attach to window...');
+        
+        // Method 1: Define class first, then attach
+        class TestClass1 {
+            constructor(name) {
+                this.name = name;
+            }
+        }
+        
+        // ATTACH to window
+        window.TestClass1 = TestClass1;
+        log('✅ TestClass1 defined and attached to window', 'success');
+        
+        log('\nMethod 2: Define directly on window...');
+        
+        // Method 2: Define directly on window
+        window.TestClass2 = class TestClass2 {
+            constructor(name) {
+                this.name = name;
+            }
+        };
+        log('✅ TestClass2 defined directly on window', 'success');
+        
+        log('\nMethod 3: Use var instead of const/let (older method)...');
+        
+        // Method 3: Use var (attaches to window in non-strict mode)
+        var TestClass3 = class TestClass3 {
+            constructor(name) {
+                this.name = name;
+            }
+        };
+        log('✅ TestClass3 defined with var', 'success');
+        
+        log('\n=== TESTING ACCESS ===');
+        
+        // Test if we can access them
+        try {
+            const instance1 = new TestClass1('Test1');
+            log('✅ Can create TestClass1 instance', 'success');
+        } catch (e) {
+            log(`❌ Cannot create TestClass1: ${e.message}`, 'error');
+        }
+        
+        try {
+            const instance2 = new TestClass2('Test2');
+            log('✅ Can create TestClass2 instance', 'success');
+        } catch (e) {
+            log(`❌ Cannot create TestClass2: ${e.message}`, 'error');
+        }
+        
+        try {
+            const instance3 = new TestClass3('Test3');
+            log('✅ Can create TestClass3 instance', 'success');
+        } catch (e) {
+            log(`❌ Cannot create TestClass3: ${e.message}`, 'error');
+        }
+        
+        log('\n=== CHECKING WINDOW OBJECT ===');
+        log(`window.TestClass1: ${typeof window.TestClass1}`);
+        log(`window.TestClass2: ${typeof window.TestClass2}`);
+        log(`window.TestClass3: ${typeof window.TestClass3}`);
+        
+        log('\n=== TESTING GLOBAL ACCESS ===');
+        log(`TestClass1 (global): ${typeof TestClass1}`);
+        log(`TestClass2 (global): ${typeof TestClass2}`);
+        log(`TestClass3 (global): ${typeof TestClass3}`);
+        
+        log('\n=== CONCLUSION ===');
+        if (typeof TestClass1 === 'function' && typeof TestClass2 === 'function' && typeof TestClass3 === 'function') {
+            log('🎉 ALL METHODS WORK! Classes are globally accessible.', 'success');
+        } else {
+            log('⚠️ Some classes are not globally accessible', 'warning');
+        }
+    </script>
+</body>
+</html>
