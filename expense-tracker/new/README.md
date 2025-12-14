@@ -36,7 +36,7 @@ A modern, responsive expense tracking application that supports multiple currenc
 
 ## Live Demo
 
-[View Live Demo on GitHub Pages](https://elagiaunified.github.io/intermediate-projects/expense-tracker/)
+[View Live Demo on GitHub Pages](https://elagiaunified.github.io/intermediate-projects/expense-tracker/new)
 
 ## Screenshot
 
