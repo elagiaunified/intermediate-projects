@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Post | DevBlog</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    <style>
+        /* Post-specific styles */
+        .post-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .post-header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .post-category {
+            display: inline-block;
+            background: var(--white);
+            color: var(--primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-title {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+
+        .post-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .post-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .post-content {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 3rem;
+        }
+
+        .post-excerpt {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            font-style: italic;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-bottom: 2rem;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 2rem 0;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .post-tag {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .post-tag:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 3rem;
+        }
+
+        .post-navigation {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            color: var(--gray-700);
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--gray-100);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.prev i {
+            order: -1;
+        }
+
+        .nav-btn.next {
+            text-align: right;
+        }
+
+        .nav-btn .nav-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .nav-btn .nav-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .post-share {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .share-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .share-btn.twitter:hover { background: #1DA1F2; }
+        .share-btn.facebook:hover { background: #4267B2; }
+        .share-btn.linkedin:hover { background: #0077B5; }
+        .share-btn.copy:hover { background: var(--success); }
+
+        .related-posts {
+            margin-top: 4rem;
+        }
+
+        .related-title {
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--gray-900);
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            box-shadow: var(--shadow-md);
+            margin-top: 3rem;
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .comments-title {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .comments-count {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .comments-list {
+            margin-bottom: 3rem;
+        }
+
+        .comment {
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            background: var(--gray-50);
+        }
+
+        .comment:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .comment-info h4 {
+            margin-bottom: 0.25rem;
+        }
+
+        .comment-info .comment-date {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .comment-action {
+            background: none;
+            border: none;
+            color: var(--gray-500);
+            cursor: pointer;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .comment-action:hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .comment-content {
+            line-height: 1.7;
+            color: var(--gray-800);
+        }
+
+        .comment-form {
+            background: var(--gray-50);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+        }
+
+        .comment-form h3 {
+            margin-bottom: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comment-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Loading State */
+        .post-loading {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .post-loading i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .post-loading h2 {
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+        }
+
+        .post-loading p {
+            color: var(--gray-500);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .post-error {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .post-error i {
+            font-size: 3rem;
+            color: var(--danger);
+            margin-bottom: 1.5rem;
+        }
+
+        .post-error h2 {
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .post-error p {
+            color: var(--gray-600);
+            max-width: 400px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .post-header {
+                padding: 3rem 0;
+            }
+
+            .post-title {
+                font-size: 2rem;
+            }
+
+            .post-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .post-content {
+                padding: 2rem;
+            }
+
+            .post-actions {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: stretch;
+            }
+
+            .post-navigation {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                text-align: center;
+            }
+
+            .nav-btn.prev i {
+                order: 0;
+            }
+
+            .post-share {
+                justify-content: center;
+            }
+
+            .comments-section {
+                padding: 2rem;
+            }
+
+            .comments-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .navbar,
+            .post-actions,
+            .post-share,
+            .comments-section,
+            .related-posts,
+            .footer {
+                display: none !important;
+            }
+
+            .post-header {
+                background: white !important;
+                color: black !important;
+                padding: 2rem 0 !important;
+            }
+
+            .post-title {
+                color: black !important;
+            }
+
+            .post-category {
+                background: white !important;
+                color: black !important;
+                border: 1px solid black;
+            }
+
+            .post-meta {
+                color: black !important;
+            }
+
+            .post-content {
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+
+            a {
+                color: black !important;
+                text-decoration: underline;
+            }
+
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+            }
+        }
+
+        /* Table of Contents */
+        .table-of-contents {
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toc-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-link {
+            color: var(--gray-700);
+            text-decoration: none;
+            display: block;
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .toc-link:hover {
+            background: var(--gray-200);
+            color: var(--primary);
+        }
+
+        .toc-level-2 { padding-left: 1rem; }
+        .toc-level-3 { padding-left: 2rem; }
+        .toc-level-4 { padding-left: 3rem; }
+
+        /* Post Actions Floating */
+        .post-actions-floating {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .action-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .action-btn.scroll-top {
+            background: var(--gray-700);
+        }
+
+        .action-btn.print {
+            background: var(--warning);
+        }
+
+        .action-btn.edit {
+            background: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .post-actions-floating {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .action-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-blog"></i> DevBlog
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#categories">Categories</a>
+                <a href="#comments">Comments</a>
+                <a href="admin.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-lock"></i> Admin
+                </a>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Post Header -->
+    <header class="post-header" id="post-header">
+        <div class="container">
+            <div class="post-header-content">
+                <span class="post-category" id="post-category">Loading...</span>
+                <h1 class="post-title" id="post-title">Loading Post...</h1>
+                <div class="post-meta" id="post-meta">
+                    <span><i class="far fa-user"></i> <span id="post-author">Author</span></span>
+                    <span><i class="far fa-calendar"></i> <span id="post-date">Date</span></span>
+                    <span><i class="far fa-clock"></i> <span id="post-read-time">0 min</span> read</span>
+                    <span><i class="far fa-eye"></i> <span id="post-views">0</span> views</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container post-container">
+        <!-- Loading State -->
+        <div class="post-loading" id="loading-state">
+            <i class="fas fa-spinner"></i>
+            <h2>Loading Post...</h2>
+            <p>Please wait while we load the post content.</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="post-error" id="error-state" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Post Not Found</h2>
+            <p>The post you're looking for doesn't exist or has been removed.</p>
+            <a href="index.html" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+
+        <!-- Post Content (Loaded Dynamically) -->
+        <div id="post-content-wrapper" style="display: none;">
+            <!-- Excerpt -->
+            <div class="post-excerpt" id="post-excerpt">
+                Loading excerpt...
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="table-of-contents" id="table-of-contents">
+                <h3 class="toc-title"><i class="fas fa-list"></i> Table of Contents</h3>
+                <ul class="toc-list" id="toc-list">
+                    <!-- Generated dynamically -->
+                </ul>
+            </div>
+
+            <!-- Content -->
+            <article class="post-content">
+                <div id="post-content" class="markdown-content">
+                    <!-- Post content will be loaded here -->
+                </div>
+
+                <!-- Tags -->
+                <div class="post-tags" id="post-tags">
+                    <!-- Tags will be loaded here -->
+                </div>
+
+                <!-- Actions -->
+                <div class="post-actions">
+                    <div class="post-navigation" id="post-navigation">
+                        <!-- Navigation buttons will be loaded here -->
+                    </div>
+                    <div class="post-share">
+                        <a href="#" class="share-btn twitter" title="Share on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="share-btn facebook" title="Share on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="share-btn linkedin" title="Share on LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <button class="share-btn copy" title="Copy link" id="copy-link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Related Posts -->
+            <section class="related-posts" id="related-posts">
+                <h2 class="related-title">Related Articles</h2>
+                <div class="related-grid" id="related-grid">
+                    <!-- Related posts will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Comments Section -->
+            <section class="comments-section" id="comments">
+                <div class="comments-header">
+                    <h2 class="comments-title">
+                        <i class="fas fa-comments"></i> Discussion
+                        <span class="comments-count" id="comments-count">0</span>
+                    </h2>
+                    <button class="btn btn-primary" id="add-comment-btn">
+                        <i class="fas fa-plus"></i> Add Comment
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                <div class="comments-list" id="comments-list">
+                    <div class="no-comments">
+                        <p>No comments yet. Be the first to comment!</p>
+                    </div>
+                </div>
+
+                <!-- Comment Form -->
+                <div class="comment-form" id="comment-form" style="display: none;">
+                    <h3>Leave a Comment</h3>
+                    <form id="comment-form-element">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="comment-name">Name *</label>
+                                <input type="text" id="comment-name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment-email">Email *</label>
+                                <input type="email" id="comment-email" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment-content">Comment *</label>
+                            <textarea id="comment-content" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancel-comment">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Post Comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-blog"></i> DevBlog
+                </div>
+                <p>Blog/CMS System - Intermediate Project #4</p>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="admin.html">Admin</a>
+                    <a href="editor.html">Editor</a>
+                    <a href="#top">Back to Top</a>
+                </div>
+                <p class="copyright">
+                    &copy; 2023 DevBlog. All data stored locally in your browser.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Buttons -->
+    <div class="post-actions-floating">
+        <button class="action-btn scroll-top" id="scroll-top" title="Scroll to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="action-btn print" id="print-post" title="Print post">
+            <i class="fas fa-print"></i>
+        </button>
+        <a href="editor.html" class="action-btn edit" id="edit-post" title="Edit post" style="display: none;">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Post-specific JavaScript
+        class PostView {
+            constructor() {
+                this.blogDB = blogDB;
+                this.utils = BlogUtils;
+                this.currentPost = null;
+                this.postSlug = null;
+                this.initialize();
+            }
+
+            initialize() {
+                // Get post slug from URL
+                this.getPostSlugFromURL();
+                
+                // Load post if slug exists
+                if (this.postSlug) {
+                    this.loadPost();
+                } else {
+                    this.showError();
+                }
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                // Initialize mobile menu (from shared script)
+                this.utils.initMobileMenu();
+            }
+
+            getPostSlugFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.postSlug = urlParams.get('slug');
+                
+                // Also check hash (fallback)
+                if (!this.postSlug && window.location.hash) {
+                    const hash = window.location.hash.substring(1);
+                    if (hash.startsWith('post-')) {
+                        this.postSlug = hash.substring(5);
+                    }
+                }
+            }
+
+            async loadPost() {
+                // Show loading state
+                document.getElementById('loading-state').style.display = 'block';
+                document.getElementById('post-content-wrapper').style.display = 'none';
+                document.getElementById('error-state').style.display = 'none';
+                
+                try {
+                    // Get post from database
+                    this.currentPost = this.blogDB.getPostBySlug(this.postSlug);
+                    
+                    if (!this.currentPost) {
+                        throw new Error('Post not found');
+                    }
+                    
+                    // Update view count
+                    this.blogDB.incrementViews(this.currentPost.id);
+                    
+                    // Render post
+                    this.renderPost();
+                    
+                    // Load related posts
+                    this.loadRelatedPosts();
+                    
+                    // Load comments
+                    this.loadComments();
+                    
+                    // Update page metadata
+                    this.updatePageMetadata();
+                    
+                    // Hide loading, show content
+                    document.getElementById('loading-state').style.display = 'none';
+                    document.getElementById('post-content-wrapper').style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error loading post:', error);
+                    this.showError();
+                }
+            }
+
+            renderPost() {
+                // Basic post info
+                document.getElementById('post-title').textContent = this.currentPost.title;
+                document.getElementById('post-category').textContent = this.currentPost.category;
+                document.getElementById('post-author').textContent = this.currentPost.author || 'Admin';
+                document.getElementById('post-date').textContent = this.blogDB.formatDate(this.currentPost.date);
+                document.getElementById('post-read-time').textContent = this.currentPost.readTime || 5;
+                document.getElementById('post-views').textContent = this.currentPost.views || 0;
+                document.getElementById('post-excerpt').textContent = this.currentPost.excerpt;
+                
+                // Update header background based on category
+                this.updateHeaderStyle();
+                
+                // Render markdown content
+                const contentElement = document.getElementById('post-content');
+                contentElement.innerHTML = this.utils.renderMarkdown(this.currentPost.content);
+                
+                // Highlight code
+                if (typeof hljs !== 'undefined') {
+                    hljs.highlightAll();
+                }
+                
+                // Generate table of contents
+                this.generateTableOfContents();
+                
+                // Render tags
+                this.renderTags();
+                
+                // Setup navigation
+                this.setupNavigation();
+                
+                // Setup share buttons
+                this.setupShareButtons();
+                
+                // Show edit button for admin
+                this.setupEditButton();
+            }
+
+            updateHeaderStyle() {
+                const header = document.getElementById('post-header');
+                const category = this.currentPost.category.toLowerCase();
+                
+                // Different gradients based on category
+                const gradients = {
+                    'javascript': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    'web development': 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    'css': 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                    'html': 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                    'tutorials': 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    'tips & tricks': 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
+                };
+                
+                if (gradients[category]) {
+                    header.style.background = gradients[category];
+                }
+            }
+
+            generateTableOfContents() {
+                const contentElement = document.getElementById('post-content');
+                const tocList = document.getElementById('toc-list');
+                const tocContainer = document.getElementById('table-of-contents');
+                
+                // Get all headings
+                const headings = contentElement.querySelectorAll('h1, h2, h3, h4');
+                
+                if (headings.length <= 3) {
+                    tocContainer.style.display = 'none';
+                    return;
+                }
+                
+                tocList.innerHTML = '';
+                
+                headings.forEach((heading, index) => {
+                    // Add ID if not present
+                    if (!heading.id) {
+                        heading.id = `section-${index}`;
+                    }
+                    
+                    const level = parseInt(heading.tagName.substring(1));
+                    const text = heading.textContent;
+                    
+                    const listItem = document.createElement('li');
+                    listItem.className = `toc-item toc-level-${level}`;
+                    
+                    const link = document.createElement('a');
+                    link.href = `#${heading.id}`;
+                    link.className = 'toc-link';
+                    link.textContent = text;
+                    
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        heading.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Update URL hash without scrolling
+                        history.pushState(null, null, `#${heading.id}`);
+                    });
+                    
+                    listItem.appendChild(link);
+                    tocList.appendChild(listItem);
+                });
+            }
+
+            renderTags() {
+                const tagsContainer = document.getElementById('post-tags');
+                
+                if (!this.currentPost.tags || this.currentPost.tags.length === 0) {
+                    tagsContainer.style.display = 'none';
+                    return;
+                }
+                
+                tagsContainer.innerHTML = this.currentPost.tags.map(tag => `
+                    <a href="index.html?tag=${encodeURIComponent(tag)}" class="post-tag">
+                        #${tag}
+                    </a>
+                `).join('');
+            }
+
+            setupNavigation() {
+                const navigationContainer = document.getElementById('post-navigation');
+                const allPosts = this.blogDB.getPublishedPosts();
+                const currentIndex = allPosts.findIndex(post => post.id === this.currentPost.id);
+                
+                navigationContainer.innerHTML = '';
+                
+                // Previous post
+                if (currentIndex > 0) {
+                    const prevPost = allPosts[currentIndex - 1];
+                    navigationContainer.innerHTML += `
+                        <a href="post.html?slug=${prevPost.slug}" class="nav-btn prev">
+                            <i class="fas fa-arrow-left"></i>
+                            <div>
+                                <div class="nav-label">Previous</div>
+                                <div class="nav-title">${this.utils.truncateText(prevPost.title, 40)}</div>
+                            </div>
+                        </a>
+                    `;
+                }
+                
+                // Next post
+                if (currentIndex < allPosts.length - 1) {
+                    const nextPost = allPosts[currentIndex + 1];
+                    navigationContainer.innerHTML += `
+                        <a href="post.html?slug=${nextPost.slug}" class="nav-btn next">
+                            <div>
+                                <div class="nav-label">Next</div>
+                                <div class="nav-title">${this.utils.truncateText(nextPost.title, 40)}</div>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    `;
+                }
+                
+                // If no navigation, show message
+                if (navigationContainer.innerHTML === '') {
+                    navigationContainer.innerHTML = `
+                        <div style="color: var(--gray-500); font-style: italic;">
+                            No other posts available
+                        </div>
+                    `;
+                }
+            }
+
+            setupShareButtons() {
+                const currentURL = encodeURIComponent(window.location.href);
+                const title = encodeURIComponent(this.currentPost.title);
+                
+                // Twitter
+                document.querySelector('.share-btn.twitter').href = 
+                    `https://twitter.com/intent/tweet?url=${currentURL}&text=${title}`;
+                
+                // Facebook
+                document.querySelector('.share-btn.facebook').href = 
+                    `https://www.facebook.com/sharer/sharer.php?u=${currentURL}`;
+                
+                // LinkedIn
+                document.querySelector('.share-btn.linkedin').href = 
+                    `https://www.linkedin.com/sharing/share-offsite/?url=${currentURL}`;
+                
+                // Copy link
+                document.getElementById('copy-link').addEventListener('click', () => {
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => {
+                            this.utils.createNotification('Link copied to clipboard!', 'success');
+                        })
+                        .catch(() => {
+                            this.utils.createNotification('Failed to copy link', 'error');
+                        });
+                });
+            }
+
+            setupEditButton() {
+                const editButton = document.getElementById('edit-post');
+                
+                // In a real app, you would check if user is admin
+                // For this demo, always show if we have edit permissions in localStorage
+                const canEdit = localStorage.getItem('devBlogAdmin') === 'true' || 
+                               sessionStorage.getItem('isAdmin') === 'true';
+                
+                if (canEdit && this.currentPost) {
+                    editButton.href = `editor.html?edit=${this.currentPost.id}`;
+                    editButton.style.display = 'flex';
+                }
+            }
+
+            loadRelatedPosts() {
+                const relatedContainer = document.getElementById('related-grid');
+                
+                if (!this.currentPost) {
+                    relatedContainer.innerHTML = '<p>No related posts found.</p>';
+                    return;
+                }
+                
+                // Find posts with same category or tags
+                const allPosts = this.blogDB.getPublishedPosts();
+                const currentPostId = this.currentPost.id;
+                
+                const related = allPosts.filter(post => {
+                    if (post.id === currentPostId) return false;
+                    
+                    // Same category
+                    if (post.category === this.currentPost.category) return true;
+                    
+                    // Shared tags
+                    if (this.currentPost.tags && post.tags) {
+                        const sharedTags = this.currentPost.tags.filter(tag => 
+                            post.tags.includes(tag)
+                        );
+                        return sharedTags.length > 0;
+                    }
+                    
+                    return false;
+                }).slice(0, 3); // Limit to 3 posts
+                
+                if (related.length === 0) {
+                    document.getElementById('related-posts').style.display = 'none';
+                    return;
+                }
+                
+                relatedContainer.innerHTML = related.map(post => `
+                    <article class="card post-card">
+                        <div class="post-image" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);">
+                            <div class="category-badge">${post.category}</div>
+                            <div class="read-time">${post.readTime || 5} min read</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="post-meta">
+                                <span><i class="far fa-calendar"></i> ${this.blogDB.formatDate(post.date)}</span>
+                                <span><i class="far fa-user"></i> ${post.author || 'Admin'}</span>
+                            </div>
+                            <h3 class="post-title">${post.title}</h3>
+                            <p class="post-excerpt">${this.utils.truncateText(post.excerpt, 100)}</p>
+                            <a href="post.html?slug=${post.slug}" class="btn btn-primary btn-sm mt-3">
+                                Read Article <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                `).join('');
+            }
+
+            loadComments() {
+                // In a real app, you would fetch comments from a server
+                // For this demo, we'll use localStorage for comments
+                const commentKey = `devBlogComments_${this.currentPost.id}`;
+                const comments = JSON.parse(localStorage.getItem(commentKey)) || [];
+                
+                const commentsList = document.getElementById('comments-list');
+                const commentsCount = document.getElementById('comments-count');
+                
+                commentsCount.textContent = comments.length;
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = `
+                        <div class="no-comments" style="text-align: center; padding: 3rem; color: var(--gray-500);">
+                            <i class="fas fa-comments fa-2x mb-3"></i>
+                            <p>No comments yet. Be the first to comment!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                commentsList.innerHTML = comments.map(comment => `
+                    <div class="comment">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="comment-avatar">
+                                    ${comment.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div class="comment-info">
+                                    <h4>${comment.name}</h4>
+                                    <div class="comment-date">${this.utils.formatCommentDate(comment.date)}</div>
+                                </div>
+                            </div>
+                            <div class="comment-actions">
+                                <button class="comment-action reply" data-id="${comment.id}">
+                                    <i class="fas fa-reply"></i> Reply
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            ${comment.content}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            setupEventListeners() {
+                // Scroll to top button
+                document.getElementById('scroll-top').addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                
+                // Print button
+                document.getElementById('print-post').addEventListener('click', () => {
+                    window.print();
+                });
+                
+                // Comment form
+                document.getElementById('add-comment-btn').addEventListener('click', () => {
+                    this.showCommentForm();
+                });
+                
+                document.getElementById('cancel-comment').addEventListener('click', () => {
+                    this.hideCommentForm();
+                });
+                
+                const commentForm = document.getElementById('comment-form-element');
+                if (commentForm) {
+                    commentForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.submitComment();
+                    });
+                }
+                
+                // Initialize scroll behavior for table of contents links
+                this.setupSmoothScroll();
+            }
+
+            showCommentForm() {
+                document.getElementById('comment-form').style.display = 'block';
+                document.getElementById('comment-name').focus();
+                document.getElementById('add-comment-btn').style.display = 'none';
+            }
+
+            hideCommentForm() {
+                document.getElementById('comment-form').style.display = 'none';
+                document.getElementById('add-comment-btn').style.display = 'block';
+                document.getElementById('comment-form-element').reset();
+            }
+
+            submitComment() {
+                const name = document.getElementById('comment-name').value.trim();
+                const email = document.getElementById('comment-email').value.trim();
+                const content = document.getElementById('comment-content').value.trim();
+                
+                if (!name || !email || !content) {
+                    this.utils.createNotification('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                // Validate email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    this.utils.createNotification('Please enter a valid email address', 'error');
+                    return;
+                }
+                
+                // Create comment object
+                const comment = {
+                    id: Date.now().toString(),
+                    postId: this.currentPost.id,
+                    name,
+                    email,
+                    content,
+                    date: new Date().toISOString(),
+                    approved: true
+                };
+                
+                // Save to localStorage
+                const commentKey = `devBlogComments_${this.currentPost.id}`;
+                const comments = JSON.parse(localStorage.getItem(commentKey)) || [];
+                comments.unshift(comment); // Add to beginning
+                localStorage.setItem(commentKey, JSON.stringify(comments));
+                
+                // Clear form and hide
+                this.hideCommentForm();
+                
+                // Reload comments
+                this.loadComments();
+                
+                // Show success message
+                this.utils.createNotification('Comment posted successfully!', 'success');
+            }
+
+            setupSmoothScroll() {
+                // Smooth scroll for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        const href = this.getAttribute('href');
+                        if (href === '#') return;
+                        
+                        const target = document.querySelector(href);
+                        if (target) {
+                            e.preventDefault();
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            }
+
+            updatePageMetadata() {
+                // Update page title
+                document.title = `${this.currentPost.title} | DevBlog`;
+                
+                // Update meta description if exists
+                const metaDescription = document.querySelector('meta[name="description"]');
+                if (metaDescription) {
+                    metaDescription.content = this.currentPost.excerpt;
+                }
+                
+                // Update Open Graph tags
+                this.updateOpenGraph();
+            }
+
+            updateOpenGraph() {
+                // Create OG tags if they don't exist
+                const properties = [
+                    { property: 'og:title', content: this.currentPost.title },
+                    { property: 'og:description', content: this.currentPost.excerpt },
+                    { property: 'og:url', content: window.location.href },
+                    { property: 'og:type', content: 'article' },
+                    { property: 'article:published_time', content: this.currentPost.date },
+                    { property: 'article:author', content: this.currentPost.author },
+                    { property: 'article:section', content: this.currentPost.category }
+                ];
+                
+                properties.forEach(({ property, content }) => {
+                    let element = document.querySelector(`meta[property="${property}"]`);
+                    if (!element) {
+                        element = document.createElement('meta');
+                        element.setAttribute('property', property);
+                        document.head.appendChild(element);
+                    }
+                    element.setAttribute('content', content);
+                });
+                
+                // Add tags as article:tag
+                if (this.currentPost.tags) {
+                    this.currentPost.tags.forEach(tag => {
+                        let element = document.querySelector(`meta[property="article:tag"][content="${tag}"]`);
+                        if (!element) {
+                            element = document.createElement('meta');
+                            element.setAttribute('property', 'article:tag');
+                            document.head.appendChild(element);
+                        }
+                        element.setAttribute('content', tag);
+                    });
+                }
+            }
+
+            showError() {
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('post-content-wrapper').style.display = 'none';
+                document.getElementById('error-state').style.display = 'block';
+            }
+
+            // Utility function for formatting comment dates
+            formatCommentDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
+                
+                if (diff < 60) return 'just now';
+                if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+                if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+                if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+                
+                return date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add formatCommentDate to BlogUtils if not exists
+            if (typeof BlogUtils !== 'undefined' && !BlogUtils.formatCommentDate) {
+                BlogUtils.formatCommentDate = function(dateString) {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diff = Math.floor((now - date) / 1000);
+                    
+                    if (diff < 60) return 'just now';
+                    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+                    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+                    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+                    
+                    return date.toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                };
+            }
+            
+            // Initialize post view
+            window.postView = new PostView();
+            
+            // Add scroll event for floating button visibility
+            window.addEventListener('scroll', () => {
+                const scrollBtn = document.getElementById('scroll-top');
+                if (window.scrollY > 300) {
+                    scrollBtn.style.display = 'flex';
+                } else {
+                    scrollBtn.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
