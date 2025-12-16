@@ -6,7 +6,6 @@
     <title>Blog CMS | Content Management System</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
 </head>
 <body>
@@ -14,25 +13,25 @@
     <nav class="navbar">
         <div class="container nav-container">
             <div class="nav-brand">
-                <a href="#home" class="nav-logo">
+                <a href="#" id="nav-home" class="nav-logo">
                     <i class="fas fa-blog"></i> BlogCMS
                 </a>
                 <span class="nav-subtitle">Your Personal Content Hub</span>
             </div>
             <div class="nav-links">
-                <a href="#home" class="nav-link active" data-page="home">
+                <a href="#" class="nav-link active" data-page="home">
                     <i class="fas fa-home"></i> Home
                 </a>
-                <a href="#posts" class="nav-link" data-page="posts">
+                <a href="#" class="nav-link" data-page="posts">
                     <i class="fas fa-newspaper"></i> All Posts
                 </a>
-                <a href="#editor" class="nav-link" data-page="editor">
+                <a href="#" class="nav-link" data-page="editor">
                     <i class="fas fa-edit"></i> New Post
                 </a>
-                <a href="#categories" class="nav-link" data-page="categories">
+                <a href="#" class="nav-link" data-page="categories">
                     <i class="fas fa-tags"></i> Categories
                 </a>
-                <a href="#stats" class="nav-link" data-page="stats">
+                <a href="#" class="nav-link" data-page="stats">
                     <i class="fas fa-chart-bar"></i> Stats
                 </a>
             </div>
@@ -50,10 +49,10 @@
                 <h1>Welcome to Your Personal Blog CMS</h1>
                 <p>Create, manage, and publish beautiful blog posts with ease. No backend required!</p>
                 <div class="hero-actions">
-                    <a href="#editor" class="btn btn-primary btn-large">
+                    <a href="#" class="btn btn-primary btn-large" data-page="editor">
                         <i class="fas fa-plus"></i> Create New Post
                     </a>
-                    <a href="#posts" class="btn btn-secondary btn-large">
+                    <a href="#" class="btn btn-secondary btn-large" data-page="posts">
                         <i class="fas fa-newspaper"></i> Browse Posts
                     </a>
                 </div>
@@ -85,7 +84,6 @@
             <section class="recent-posts">
                 <h2><i class="fas fa-history"></i> Recent Posts</h2>
                 <div id="recent-posts-container" class="posts-grid">
-                    <!-- Recent posts will be loaded here -->
                     <div class="empty-state">
                         <i class="fas fa-feather-alt"></i>
                         <h3>No posts yet</h3>
@@ -304,12 +302,6 @@
                     <div id="tags-cloud" class="tags-cloud">
                         <!-- Tags will be loaded here -->
                     </div>
-                    <div class="tags-stats">
-                        <h3><i class="fas fa-chart-pie"></i> Tag Statistics</h3>
-                        <div id="tag-stats-container">
-                            <!-- Tag stats will be loaded here -->
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -324,7 +316,7 @@
                 <div class="stat-card wide">
                     <h3><i class="fas fa-calendar-alt"></i> Posts Over Time</h3>
                     <div class="chart-container">
-                        <canvas id="posts-chart"></canvas>
+                        <div class="no-data">Chart would display here with a chart library</div>
                     </div>
                 </div>
 
@@ -423,10 +415,10 @@
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
-                    <a href="#home">Home</a>
-                    <a href="#posts">All Posts</a>
-                    <a href="#editor">New Post</a>
-                    <a href="#stats">Analytics</a>
+                    <a href="#" data-page="home">Home</a>
+                    <a href="#" data-page="posts">All Posts</a>
+                    <a href="#" data-page="editor">New Post</a>
+                    <a href="#" data-page="stats">Analytics</a>
                 </div>
                 <div class="footer-section">
                     <h4>Features</h4>
@@ -442,9 +434,6 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
