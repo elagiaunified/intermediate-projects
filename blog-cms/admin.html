@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | DevBlog CMS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚙️</text></svg>">
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="navbar admin-navbar">
+        <div class="container">
+            <div class="navbar-left">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-blog"></i> DevBlog
+                </a>
+                <span class="admin-badge">Admin Panel</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="btn btn-outline btn-sm">
+                    <i class="fas fa-eye"></i> View Blog
+                </a>
+                <a href="#" id="logout-btn" class="btn btn-danger btn-sm">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Admin Sidebar -->
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <div class="admin-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h4>Administrator</h4>
+                    <p>Super Admin</p>
+                </div>
+            </div>
+
+            <nav class="admin-menu">
+                <a href="#dashboard" class="menu-item active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#posts" class="menu-item" data-tab="posts">
+                    <i class="fas fa-newspaper"></i>
+                    <span>All Posts</span>
+                    <span class="menu-badge" id="posts-count">0</span>
+                </a>
+                <a href="#new-post" class="menu-item" data-tab="new-post">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>New Post</span>
+                </a>
+                <a href="#categories" class="menu-item" data-tab="categories">
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+                    <span class="menu-badge" id="categories-count">0</span>
+                </a>
+                <a href="#tags" class="menu-item" data-tab="tags">
+                    <i class="fas fa-hashtag"></i>
+                    <span>Tags</span>
+                    <span class="menu-badge" id="tags-count">0</span>
+                </a>
+                <a href="#comments" class="menu-item" data-tab="comments">
+                    <i class="fas fa-comments"></i>
+                    <span>Comments</span>
+                    <span class="menu-badge" id="comments-count">0</span>
+                </a>
+                <a href="#settings" class="menu-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-info">
+                    <p><i class="fas fa-database"></i> Data: <span id="storage-info">0 KB</span></p>
+                    <p><i class="fas fa-code"></i> Version: 1.0.0</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Admin Main Content -->
+        <main class="admin-main">
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="admin-tab active">
+                <div class="tab-header">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                    <p>Welcome back, Administrator. Here's what's happening with your blog.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon posts">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-total-posts">0</h3>
+                            <p>Total Posts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon categories">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-total-categories">0</h3>
+                            <p>Categories</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon tags">
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-total-tags">0</h3>
+                            <p>Tags</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon views">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="stat-total-views">0</h3>
+                            <p>Total Views</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="dashboard-content">
+                    <div class="dashboard-column">
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-chart-line"></i> Traffic Overview</h3>
+                            <div class="traffic-chart">
+                                <canvas id="trafficChart" height="200"></canvas>
+                            </div>
+                            <div class="traffic-stats">
+                                <div class="traffic-stat">
+                                    <span class="stat-label">Today's Views</span>
+                                    <span class="stat-value" id="today-views">0</span>
+                                </div>
+                                <div class="traffic-stat">
+                                    <span class="stat-label">Avg. Read Time</span>
+                                    <span class="stat-value" id="avg-read-time">0 min</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-fire"></i> Popular Posts</h3>
+                            <div class="popular-posts" id="popular-posts">
+                                <!-- Popular posts will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-column">
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                            <div class="quick-actions">
+                                <a href="#new-post" class="quick-action-btn" data-tab="new-post">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Post</span>
+                                </a>
+                                <a href="#posts" class="quick-action-btn" data-tab="posts">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Edit Posts</span>
+                                </a>
+                                <a href="#categories" class="quick-action-btn" data-tab="categories">
+                                    <i class="fas fa-folder-plus"></i>
+                                    <span>Add Category</span>
+                                </a>
+                                <a href="#settings" class="quick-action-btn" data-tab="settings">
+                                    <i class="fas fa-cogs"></i>
+                                    <span>Settings</span>
+                                </a>
+                                <button id="export-data" class="quick-action-btn">
+                                    <i class="fas fa-download"></i>
+                                    <span>Export Data</span>
+                                </button>
+                                <button id="import-data" class="quick-action-btn">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Import Data</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                            <div class="activity-feed" id="activity-feed">
+                                <!-- Activity feed will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- All Posts Tab -->
+            <section id="posts" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-newspaper"></i> All Posts</h2>
+                    <div class="tab-actions">
+                        <a href="#new-post" class="btn btn-primary" data-tab="new-post">
+                            <i class="fas fa-plus"></i> New Post
+                        </a>
+                        <div class="search-box">
+                            <input type="text" id="posts-search" placeholder="Search posts...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="posts-controls">
+                    <div class="filter-controls">
+                        <select id="posts-filter">
+                            <option value="all">All Posts</option>
+                            <option value="published">Published</option>
+                            <option value="draft">Drafts</option>
+                            <option value="featured">Featured</option>
+                        </select>
+                        <select id="category-filter">
+                            <option value="all">All Categories</option>
+                            <!-- Categories will be loaded here -->
+                        </select>
+                        <select id="sort-posts">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="title">Title A-Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table" id="posts-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Views</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="posts-table-body">
+                            <!-- Posts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <div class="table-info">
+                        Showing <span id="posts-shown">0</span> of <span id="posts-total">0</span> posts
+                    </div>
+                    <div class="pagination" id="posts-pagination">
+                        <!-- Pagination will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- New Post Tab -->
+            <section id="new-post" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-plus-circle"></i> Create New Post</h2>
+                    <p>Write a new blog post. All fields are required unless marked optional.</p>
+                </div>
+
+                <form id="post-form" class="post-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="post-title">Post Title *</label>
+                            <input type="text" id="post-title" class="form-control" 
+                                   placeholder="Enter post title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-slug">URL Slug</label>
+                            <input type="text" id="post-slug" class="form-control" 
+                                   placeholder="auto-generated-slug" readonly>
+                            <small class="form-hint">Auto-generated from title. Click to edit.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="post-category">Category *</label>
+                            <select id="post-category" class="form-control" required>
+                                <option value="">Select a category</option>
+                                <!-- Categories will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="post-tags">Tags</label>
+                            <input type="text" id="post-tags" class="form-control" 
+                                   placeholder="javascript, css, webdev (comma separated)">
+                            <small class="form-hint">Separate tags with commas</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="post-excerpt">Excerpt *</label>
+                            <textarea id="post-excerpt" class="form-control" rows="3" 
+                                      placeholder="Brief summary of your post" required></textarea>
+                            <small class="form-hint">Displayed on blog listing pages</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group editor-group">
+                            <label for="post-content">Content *</label>
+                            <div class="editor-toolbar">
+                                <button type="button" class="toolbar-btn" data-format="bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="heading">
+                                    <i class="fas fa-heading"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="link">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="code">
+                                    <i class="fas fa-code"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="list">
+                                    <i class="fas fa-list"></i>
+                                </button>
+                                <button type="button" class="toolbar-btn" data-format="preview">
+                                    <i class="fas fa-eye"></i> Preview
+                                </button>
+                            </div>
+                            <textarea id="post-content" class="form-control" rows="15" 
+                                      placeholder="Write your post content in Markdown..." required></textarea>
+                            <small class="form-hint">
+                                Supports Markdown syntax. Use # for headers, **bold**, *italic*, etc.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Post Status</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="post-status" value="published" checked>
+                                    Published
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="post-status" value="draft">
+                                    Draft
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="post-featured">
+                                <span>Feature this post</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="post-comments">
+                                <span>Allow comments</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Publish Post
+                        </button>
+                        <button type="button" id="save-draft" class="btn btn-secondary">
+                            <i class="fas fa-file-alt"></i> Save Draft
+                        </button>
+                        <button type="reset" class="btn btn-outline">
+                            <i class="fas fa-times"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Categories Tab -->
+            <section id="categories" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-tags"></i> Categories</h2>
+                    <p>Manage your blog categories. Categories help organize your content.</p>
+                </div>
+
+                <div class="categories-manager">
+                    <div class="categories-form">
+                        <h3><i class="fas fa-plus"></i> Add New Category</h3>
+                        <form id="category-form" class="form-inline">
+                            <div class="form-group">
+                                <input type="text" id="category-name" class="form-control" 
+                                       placeholder="Enter category name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="category-slug" class="form-control" 
+                                       placeholder="url-slug" readonly>
+                            </div>
+                            <div class="form-group">
+                                <input type="color" id="category-color" value="#6366f1" 
+                                       title="Choose a color for this category">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Category
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="categories-list">
+                        <h3><i class="fas fa-list"></i> Existing Categories</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Slug</th>
+                                        <th>Posts</th>
+                                        <th>Color</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categories-table-body">
+                                    <!-- Categories will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tags Tab -->
+            <section id="tags" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-hashtag"></i> Tags</h2>
+                    <p>Manage your blog tags. Tags help users find related content.</p>
+                </div>
+
+                <div class="tags-manager">
+                    <div class="tags-form">
+                        <h3><i class="fas fa-plus"></i> Add New Tag</h3>
+                        <form id="tag-form" class="form-inline">
+                            <div class="form-group">
+                                <input type="text" id="tag-name" class="form-control" 
+                                       placeholder="Enter tag name" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Tag
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="tags-cloud-manager">
+                        <h3><i class="fas fa-cloud"></i> Tag Cloud</h3>
+                        <div class="tags-cloud" id="admin-tags-cloud">
+                            <!-- Tags will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="tags-list">
+                        <h3><i class="fas fa-list"></i> All Tags</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Posts</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tags-table-body">
+                                    <!-- Tags will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comments Tab -->
+            <section id="comments" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-comments"></i> Comments</h2>
+                    <p>Manage comments on your blog posts.</p>
+                </div>
+
+                <div class="comments-filters">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-status="all">
+                            All <span class="badge" id="count-all">0</span>
+                        </button>
+                        <button class="filter-tab" data-status="pending">
+                            Pending <span class="badge" id="count-pending">0</span>
+                        </button>
+                        <button class="filter-tab" data-status="approved">
+                            Approved <span class="badge" id="count-approved">0</span>
+                        </button>
+                        <button class="filter-tab" data-status="spam">
+                            Spam <span class="badge" id="count-spam">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="comments-list" id="comments-list">
+                    <div class="empty-state">
+                        <i class="fas fa-comments"></i>
+                        <h3>No comments yet</h3>
+                        <p>Comments will appear here once readers start engaging with your posts.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settings" class="admin-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                    <p>Configure your blog settings and preferences.</p>
+                </div>
+
+                <div class="settings-tabs">
+                    <div class="settings-sidebar">
+                        <button class="settings-tab-btn active" data-tab="general">
+                            <i class="fas fa-sliders-h"></i> General
+                        </button>
+                        <button class="settings-tab-btn" data-tab="appearance">
+                            <i class="fas fa-paint-brush"></i> Appearance
+                        </button>
+                        <button class="settings-tab-btn" data-tab="seo">
+                            <i class="fas fa-search"></i> SEO
+                        </button>
+                        <button class="settings-tab-btn" data-tab="backup">
+                            <i class="fas fa-database"></i> Backup
+                        </button>
+                    </div>
+
+                    <div class="settings-content">
+                        <!-- General Settings -->
+                        <div id="general" class="settings-tab-content active">
+                            <form id="general-settings-form">
+                                <div class="form-group">
+                                    <label for="blog-name">Blog Name</label>
+                                    <input type="text" id="blog-name" class="form-control" 
+                                           value="DevBlog" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blog-description">Blog Description</label>
+                                    <textarea id="blog-description" class="form-control" rows="3">
+                                        A modern blog & CMS system built with HTML, CSS, and JavaScript
+                                    </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-email">Admin Email</label>
+                                    <input type="email" id="admin-email" class="form-control" 
+                                           value="admin@devblog.example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="posts-per-page">Posts Per Page</label>
+                                    <input type="number" id="posts-per-page" class="form-control" 
+                                           value="6" min="1" max="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="timezone">Timezone</label>
+                                    <select id="timezone" class="form-control">
+                                        <option value="UTC">UTC</option>
+                                        <option value="EST">Eastern Time (EST)</option>
+                                        <option value="PST">Pacific Time (PST)</option>
+                                        <option value="GMT">Greenwich Mean Time (GMT)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save General Settings
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Appearance Settings -->
+                        <div id="appearance" class="settings-tab-content">
+                            <form id="appearance-settings-form">
+                                <div class="form-group">
+                                    <label>Theme</label>
+                                    <div class="theme-selector">
+                                        <label class="theme-option">
+                                            <input type="radio" name="theme" value="light" checked>
+                                            <div class="theme-preview light-theme">
+                                                <i class="fas fa-sun"></i>
+                                                <span>Light</span>
+                                            </div>
+                                        </label>
+                                        <label class="theme-option">
+                                            <input type="radio" name="theme" value="dark">
+                                            <div class="theme-preview dark-theme">
+                                                <i class="fas fa-moon"></i>
+                                                <span>Dark</span>
+                                            </div>
+                                        </label>
+                                        <label class="theme-option">
+                                            <input type="radio" name="theme" value="auto">
+                                            <div class="theme-preview auto-theme">
+                                                <i class="fas fa-adjust"></i>
+                                                <span>Auto</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="primary-color">Primary Color</label>
+                                    <input type="color" id="primary-color" value="#6366f1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="font-family">Font Family</label>
+                                    <select id="font-family" class="form-control">
+                                        <option value="system">System Fonts</option>
+                                        <option value="inter">Inter</option>
+                                        <option value="roboto">Roboto</option>
+                                        <option value="open-sans">Open Sans</option>
+                                        <option value="montserrat">Montserrat</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="logo-url">Logo URL (Optional)</label>
+                                    <input type="url" id="logo-url" class="form-control" 
+                                           placeholder="https://example.com/logo.png">
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save Appearance Settings
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- SEO Settings -->
+                        <div id="seo" class="settings-tab-content">
+                            <form id="seo-settings-form">
+                                <div class="form-group">
+                                    <label for="meta-title">Default Meta Title</label>
+                                    <input type="text" id="meta-title" class="form-control" 
+                                           value="DevBlog | Modern Blog & CMS">
+                                    <small class="form-hint">Used when no specific title is set</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="meta-description">Default Meta Description</label>
+                                    <textarea id="meta-description" class="form-control" rows="3">
+                                        A modern blog and CMS system built with pure HTML, CSS, and JavaScript.
+                                    </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="meta-keywords">Default Keywords</label>
+                                    <input type="text" id="meta-keywords" class="form-control" 
+                                           value="blog, cms, javascript, web development">
+                                    <small class="form-hint">Comma-separated keywords</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="generate-sitemap" checked>
+                                        <span>Generate Sitemap Automatically</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-og-tags" checked>
+                                        <span>Enable Open Graph Tags</span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enable-twitter-cards" checked>
+                                        <span>Enable Twitter Cards</span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Save SEO Settings
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Backup Settings -->
+                        <div id="backup" class="settings-tab-content">
+                            <div class="backup-actions">
+                                <div class="backup-card">
+                                    <h3><i class="fas fa-download"></i> Export Data</h3>
+                                    <p>Download a backup of all your blog data.</p>
+                                    <button id="export-backup" class="btn btn-primary">
+                                        <i class="fas fa-file-export"></i> Export All Data
+                                    </button>
+                                    <div class="export-options mt-3">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="export-posts" checked>
+                                            <span>Include Posts</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="export-categories" checked>
+                                            <span>Include Categories</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="export-settings" checked>
+                                            <span>Include Settings</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="backup-card">
+                                    <h3><i class="fas fa-upload"></i> Import Data</h3>
+                                    <p>Restore your blog from a backup file.</p>
+                                    <div class="file-upload">
+                                        <input type="file" id="import-file" accept=".json">
+                                        <label for="import-file" class="btn btn-secondary">
+                                            <i class="fas fa-file-import"></i> Choose File
+                                        </label>
+                                        <button id="import-backup" class="btn btn-primary" disabled>
+                                            <i class="fas fa-upload"></i> Import Data
+                                        </button>
+                                    </div>
+                                    <small class="form-hint mt-2">Warning: This will replace all existing data.</small>
+                                </div>
+
+                                <div class="backup-card">
+                                    <h3><i class="fas fa-trash"></i> Reset Data</h3>
+                                    <p>Clear all blog data and start fresh.</p>
+                                    <button id="reset-data" class="btn btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Reset All Data
+                                    </button>
+                                    <small class="form-hint mt-2">This action cannot be undone.</small>
+                                </div>
+                            </div>
+
+                            <div class="backup-info">
+                                <h3><i class="fas fa-info-circle"></i> Backup Information</h3>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">Last Backup:</span>
+                                        <span class="info-value" id="last-backup">Never</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Data Size:</span>
+                                        <span class="info-value" id="backup-size">0 KB</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Posts:</span>
+                                        <span class="info-value" id="backup-posts">0</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Categories:</span>
+                                        <span class="info-value" id="backup-categories">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Post Preview</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="preview-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirm Action</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-cancel" class="btn btn-secondary">Cancel</button>
+                <button id="confirm-ok" class="btn btn-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
