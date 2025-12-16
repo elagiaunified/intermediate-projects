@@ -1075,21 +1075,11 @@ textarea {
     color: var(--gray);
     font-size: 0.875rem;
 }
-/* Add these to fix the issues */
-.post-meta-left {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
+/* Add these new styles at the END of your style.css file */
 
-.post-meta-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 5px;
-}
-
-.post-status {
+/* Post Status Badges */
+.post-status-badge {
+    display: inline-block;
     padding: 3px 8px;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -1097,42 +1087,39 @@ textarea {
     text-transform: uppercase;
 }
 
-.post-status.draft {
-    background: var(--warning);
+.post-status-badge.draft {
+    background-color: #f59e0b;
     color: white;
 }
 
-.post-status.published {
-    background: var(--success);
+.post-status-badge.published {
+    background-color: #10b981;
     color: white;
 }
 
-.post-views {
-    font-size: 0.875rem;
-    color: var(--gray);
-}
-
-.tag-count {
-    font-size: 0.75rem;
-    opacity: 0.8;
-}
-
-/* Fix for post cards in all posts */
-.post-card {
-    cursor: pointer;
-}
-
-/* Ensure proper spacing in post meta */
+/* Post Meta Layout */
 .post-meta {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-top: auto;
-    padding-top: var(--spacing-md);
+    padding-top: 15px;
     border-top: 1px solid var(--light-gray);
 }
 
-/* Notification styles */
+.post-meta-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.post-meta-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Notifications */
 .notification {
     position: fixed;
     top: 20px;
@@ -1166,9 +1153,116 @@ textarea {
     to { opacity: 0; }
 }
 
-/* Fix for empty editor */
-.editor-content:empty:before {
-    content: attr(placeholder);
+/* Modal Content Styling */
+.post-content-modal h1,
+.post-content-modal h2,
+.post-content-modal h3 {
+    margin: 1.5em 0 0.5em;
+    color: var(--dark);
+}
+
+.post-content-modal p {
+    margin-bottom: 1em;
+    line-height: 1.6;
+}
+
+.post-content-modal ul,
+.post-content-modal ol {
+    margin: 1em 0;
+    padding-left: 2em;
+}
+
+.post-content-modal blockquote {
+    border-left: 4px solid var(--primary);
+    margin: 1em 0;
+    padding-left: 1em;
     color: var(--gray);
-    pointer-events: none;
+    font-style: italic;
+}
+
+.post-content-modal code {
+    background: var(--lighter-gray);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.post-content-modal pre {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1em;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.post-content-modal img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    margin: 1em 0;
+}
+
+/* Tag Suggestions */
+.tag-suggestion {
+    color: var(--primary);
+    cursor: pointer;
+    text-decoration: underline;
+    margin: 0 5px;
+}
+
+.tag-suggestion:hover {
+    color: var(--primary-dark);
+}
+
+/* Empty States */
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+    font-style: italic;
+}
+
+/* Responsive Images in Posts */
+.post-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Fix for post cards in posts container */
+.posts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+/* Mobile Menu Fix */
+@media (max-width: 768px) {
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--primary);
+        flex-direction: column;
+        padding: 0;
+        display: none;
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .nav-links .nav-link {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .nav-links .nav-link:last-child {
+        border-bottom: none;
+    }
 }
