@@ -1075,3 +1075,100 @@ textarea {
     color: var(--gray);
     font-size: 0.875rem;
 }
+/* Add these to fix the issues */
+.post-meta-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.post-meta-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.post-status {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.post-status.draft {
+    background: var(--warning);
+    color: white;
+}
+
+.post-status.published {
+    background: var(--success);
+    color: white;
+}
+
+.post-views {
+    font-size: 0.875rem;
+    color: var(--gray);
+}
+
+.tag-count {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Fix for post cards in all posts */
+.post-card {
+    cursor: pointer;
+}
+
+/* Ensure proper spacing in post meta */
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--light-gray);
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 3000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: slideInRight 0.3s ease;
+}
+
+.notification-success {
+    background: linear-gradient(135deg, var(--success), #059669);
+}
+
+.notification-error {
+    background: linear-gradient(135deg, var(--danger), #dc2626);
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Fix for empty editor */
+.editor-content:empty:before {
+    content: attr(placeholder);
+    color: var(--gray);
+    pointer-events: none;
+}
