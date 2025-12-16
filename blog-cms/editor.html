@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Editor | DevBlog</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✍️</text></svg>">
+    <style>
+        /* Editor-specific styles */
+        .editor-app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: var(--gray-50);
+        }
+
+        .editor-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+        }
+
+        .editor-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .editor-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-decoration: none;
+        }
+
+        .editor-logo i {
+            color: var(--primary);
+        }
+
+        .editor-title {
+            font-size: 1.25rem;
+            color: var(--gray-700);
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .editor-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .editor-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .preview-pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+        }
+
+        .pane-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pane-header h3 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .word-count {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            background: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-300);
+        }
+
+        .editor-textarea {
+            flex: 1;
+            padding: 1.5rem;
+            border: none;
+            resize: none;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--white);
+            outline: none;
+            overflow-y: auto;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .preview-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 0.25rem;
+            padding-right: 0.75rem;
+            border-right: 1px solid var(--gray-300);
+        }
+
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem 0.75rem;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .toolbar-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .splitter {
+            width: 8px;
+            background: var(--gray-200);
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+        }
+
+        .splitter:hover {
+            background: var(--gray-300);
+        }
+
+        .splitter i {
+            transform: rotate(90deg);
+        }
+
+        .editor-sidebar {
+            width: 300px;
+            background: var(--white);
+            border-left: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-section h4 {
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group-sm {
+            margin-bottom: 1rem;
+        }
+
+        .form-group-sm label {
+            display: block;
+            margin-bottom: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-control-sm {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-control-sm:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            padding: 0.375rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            min-height: 38px;
+            align-items: center;
+        }
+
+        .tag-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .tag-badge .remove-tag {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .tag-badge .remove-tag:hover {
+            opacity: 1;
+        }
+
+        .tags-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.25rem;
+            min-width: 100px;
+            font-size: 0.875rem;
+        }
+
+        .checkbox-label-sm {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            cursor: pointer;
+        }
+
+        .checkbox-label-sm input[type="checkbox"] {
+            width: auto;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.draft {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.published {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .sidebar-actions {
+            padding: 1.5rem;
+            margin-top: auto;
+            border-top: 1px solid var(--gray-200);
+            background: var(--gray-50);
+        }
+
+        .sidebar-actions .btn {
+            width: 100%;
+            margin-bottom: 0.75rem;
+        }
+
+        .autosave-status {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 1rem;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .fullscreen-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .markdown-help {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            width: 300px;
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .markdown-help.active {
+            transform: translateX(0);
+        }
+
+        .help-toggle {
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .markdown-cheatsheet {
+            font-size: 0.875rem;
+        }
+
+        .markdown-cheatsheet table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.75rem 0;
+        }
+
+        .markdown-cheatsheet td {
+            padding: 0.375rem;
+            border: 1px solid var(--gray-200);
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        .fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            background: var(--white) !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+
+        @media (max-width: 1200px) {
+            .editor-sidebar {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .editor-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .editor-main {
+                flex-direction: column;
+            }
+            
+            .editor-pane, .preview-pane {
+                min-height: 50vh;
+            }
+            
+            .splitter {
+                width: 100%;
+                height: 8px;
+                cursor: row-resize;
+            }
+            
+            .splitter i {
+                transform: rotate(0deg);
+            }
+            
+            .editor-toolbar {
+                overflow-x: auto;
+            }
+        }
+
+        /* Markdown preview styles */
+        .markdown-content h1 {
+            border-bottom: 2px solid var(--gray-300);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .markdown-content h2 {
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 0.375rem;
+            margin-top: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .markdown-content pre {
+            background: var(--gray-900);
+            color: var(--gray-100);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .markdown-content code {
+            background: var(--gray-100);
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875em;
+        }
+
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--gray-600);
+            font-style: italic;
+        }
+
+        .markdown-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .markdown-content th, .markdown-content td {
+            border: 1px solid var(--gray-300);
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .markdown-content th {
+            background: var(--gray-100);
+            font-weight: 600;
+        }
+
+        .markdown-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="editor-app">
+    <!-- Header -->
+    <header class="editor-header">
+        <div class="editor-header-left">
+            <a href="index.html" class="editor-logo">
+                <i class="fas fa-arrow-left"></i> Back to Blog
+            </a>
+            <span class="editor-title" id="editor-title">New Post</span>
+            <span class="status-badge draft" id="post-status-badge">Draft</span>
+        </div>
+        <div class="editor-actions">
+            <button id="save-draft" class="btn btn-secondary">
+                <i class="fas fa-save"></i> Save Draft
+            </button>
+            <button id="publish-post" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Publish
+            </button>
+            <button id="more-actions" class="btn btn-outline">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Editor -->
+    <main class="editor-main">
+        <!-- Editor Pane -->
+        <div class="editor-pane">
+            <div class="pane-header">
+                <h3><i class="fas fa-edit"></i> Markdown Editor</h3>
+                <div class="word-count">
+                    Words: <span id="word-count">0</span> | 
+                    Characters: <span id="char-count">0</span>
+                </div>
+            </div>
+            <div class="editor-toolbar">
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" data-format="h1" title="Heading 1">
+                        <i class="fas fa-heading"></i> H1
+                    </button>
+                    <button class="toolbar-btn" data-format="h2" title="Heading 2">
+                        <i class="fas fa-heading"></i> H2
+                    </button>
+                    <button class="toolbar-btn" data-format="h3" title="Heading 3">
+                        <i class="fas fa-heading"></i> H3
+                    </button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" data-format="bold" title="Bold">
+                        <i class="fas fa-bold"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="italic" title="Italic">
+                        <i class="fas fa-italic"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="strikethrough" title="Strikethrough">
+                        <i class="fas fa-strikethrough"></i>
+                    </button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" data-format="link" title="Link">
+                        <i class="fas fa-link"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="image" title="Image">
+                        <i class="fas fa-image"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="code" title="Inline Code">
+                        <i class="fas fa-code"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="codeblock" title="Code Block">
+                        <i class="fas fa-file-code"></i>
+                    </button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" data-format="list" title="Unordered List">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="olist" title="Ordered List">
+                        <i class="fas fa-list-ol"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="checklist" title="Checklist">
+                        <i class="fas fa-tasks"></i>
+                    </button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" data-format="blockquote" title="Blockquote">
+                        <i class="fas fa-quote-right"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="table" title="Table">
+                        <i class="fas fa-table"></i>
+                    </button>
+                    <button class="toolbar-btn" data-format="hr" title="Horizontal Rule">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+                <div class="toolbar-group">
+                    <button class="toolbar-btn" id="toggle-fullscreen" title="Toggle Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    <button class="toolbar-btn" id="toggle-help" title="Markdown Help">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <textarea 
+                id="markdown-editor" 
+                class="editor-textarea" 
+                placeholder="Start writing your post in Markdown...&#10;&#10;# Title&#10;## Subtitle&#10;&#10;Start writing here..."
+                spellcheck="true"
+                autofocus
+            ></textarea>
+        </div>
+
+        <!-- Splitter -->
+        <div class="splitter" id="splitter">
+            <i class="fas fa-grip-lines"></i>
+        </div>
+
+        <!-- Preview Pane -->
+        <div class="preview-pane">
+            <div class="pane-header">
+                <h3><i class="fas fa-eye"></i> Live Preview</h3>
+                <div class="word-count">
+                    Reading time: <span id="reading-time">0 min</span>
+                </div>
+            </div>
+            <div id="preview-content" class="preview-content markdown-content">
+                <div class="empty-state">
+                    <i class="fas fa-paragraph fa-2x"></i>
+                    <h3>Preview will appear here</h3>
+                    <p>Start typing in the editor to see live preview</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="editor-sidebar">
+            <div class="sidebar-section">
+                <h4><i class="fas fa-info-circle"></i> Post Details</h4>
+                <div class="form-group-sm">
+                    <label for="post-title">Title</label>
+                    <input type="text" id="post-title" class="form-control-sm" placeholder="Enter post title">
+                </div>
+                <div class="form-group-sm">
+                    <label for="post-slug">URL Slug</label>
+                    <input type="text" id="post-slug" class="form-control-sm" placeholder="auto-generated-slug">
+                </div>
+                <div class="form-group-sm">
+                    <label for="post-excerpt">Excerpt</label>
+                    <textarea id="post-excerpt" class="form-control-sm" rows="3" placeholder="Brief summary of your post"></textarea>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4><i class="fas fa-tags"></i> Categories & Tags</h4>
+                <div class="form-group-sm">
+                    <label for="post-category">Category</label>
+                    <select id="post-category" class="form-control-sm">
+                        <option value="">Select a category</option>
+                        <!-- Categories will be loaded here -->
+                    </select>
+                </div>
+                <div class="form-group-sm">
+                    <label for="post-tags">Tags</label>
+                    <div class="tags-input" id="tags-container">
+                        <input type="text" id="post-tags-input" placeholder="Add a tag...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4><i class="fas fa-cog"></i> Post Settings</h4>
+                <div class="form-group-sm">
+                    <label class="checkbox-label-sm">
+                        <input type="checkbox" id="post-featured">
+                        Feature this post
+                    </label>
+                    <label class="checkbox-label-sm">
+                        <input type="checkbox" id="post-published" checked>
+                        Publish immediately
+                    </label>
+                    <label class="checkbox-label-sm">
+                        <input type="checkbox" id="allow-comments" checked>
+                        Allow comments
+                    </label>
+                </div>
+                <div class="form-group-sm">
+                    <label for="post-author">Author</label>
+                    <input type="text" id="post-author" class="form-control-sm" value="Admin">
+                </div>
+            </div>
+
+            <div class="sidebar-actions">
+                <button id="sidebar-save" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Post
+                </button>
+                <button id="sidebar-preview" class="btn btn-secondary">
+                    <i class="fas fa-external-link-alt"></i> Preview in New Tab
+                </button>
+                <button id="sidebar-clear" class="btn btn-outline">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+                <div class="autosave-status" id="autosave-status">
+                    <i class="fas fa-history"></i> Autosave: <span id="last-save">Never</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Buttons -->
+    <button class="fullscreen-btn" id="fullscreen-toggle">
+        <i class="fas fa-expand"></i>
+    </button>
+
+    <!-- Markdown Help Panel -->
+    <div class="markdown-help" id="markdown-help">
+        <button class="help-toggle" id="help-toggle">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <h4><i class="fas fa-book"></i> Markdown Cheatsheet</h4>
+        <div class="markdown-cheatsheet">
+            <table>
+                <tr><td># Heading 1</td><td>Largest heading</td></tr>
+                <tr><td>## Heading 2</td><td>Medium heading</td></tr>
+                <tr><td>### Heading 3</td><td>Small heading</td></tr>
+                <tr><td>**Bold**</td><td>Bold text</td></tr>
+                <tr><td>*Italic*</td><td>Italic text</td></tr>
+                <tr><td>~~Strikethrough~~</td><td>Strikethrough</td></tr>
+                <tr><td>[Link](url)</td><td>Hyperlink</td></tr>
+                <tr><td>![Image](url)</td><td>Embed image</td></tr>
+                <tr><td>`code`</td><td>Inline code</td></tr>
+                <tr><td>```code```</td><td>Code block</td></tr>
+                <tr><td>- List item</td><td>Bullet list</td></tr>
+                <tr><td>1. List item</td><td>Numbered list</td></tr>
+                <tr><td>> Quote</td><td>Blockquote</td></tr>
+                <tr><td>---</td><td>Horizontal rule</td></tr>
+            </table>
+            <p><small>Tip: Use the toolbar buttons for quick formatting.</small></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="script.js"></script>
+    <script src="editor.js"></script>
+</body>
+</html>
