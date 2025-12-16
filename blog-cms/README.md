@@ -72,27 +72,9 @@ A fully-featured blog and content management system built with pure HTML, CSS, a
 
 ## 🛠️ Installation
 
-### Option 1: GitHub Pages (Recommended)
 1. Fork this repository
 2. Enable GitHub Pages in repository settings
-3. Visit `https://yourusername.github.io/intermediate-projects/blog-cms/`
-
-### Option 2: Local Development
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/intermediate-projects.git
-
-# Navigate to project
-cd intermediate-projects/blog-cms
-
-# Open in browser (no server required)
-open index.html
-Option 3: Direct Download
-Download the ZIP file
-
-Extract to a folder
-
-Open index.html in your browser
+3. Visit `https://elagiaunified.github.io/intermediate-projects/blog-cms/`
 
 📁 Project Structure
 text
@@ -108,6 +90,7 @@ blog-cms/
 ├── editor.js               # Editor-specific functionality
 ├── README.md               # This documentation
 └── assets/                 # Optional: Images and assets
+
 🔧 Usage Guide
 1. Viewing the Blog
 Open index.html to see the public blog
