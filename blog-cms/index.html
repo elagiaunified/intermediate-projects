@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog CMS | Content Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="nav-brand">
+                <a href="#home" class="nav-logo">
+                    <i class="fas fa-blog"></i> BlogCMS
+                </a>
+                <span class="nav-subtitle">Your Personal Content Hub</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active" data-page="home">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="#posts" class="nav-link" data-page="posts">
+                    <i class="fas fa-newspaper"></i> All Posts
+                </a>
+                <a href="#editor" class="nav-link" data-page="editor">
+                    <i class="fas fa-edit"></i> New Post
+                </a>
+                <a href="#categories" class="nav-link" data-page="categories">
+                    <i class="fas fa-tags"></i> Categories
+                </a>
+                <a href="#stats" class="nav-link" data-page="stats">
+                    <i class="fas fa-chart-bar"></i> Stats
+                </a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container main-container">
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <header class="hero">
+                <h1>Welcome to Your Personal Blog CMS</h1>
+                <p>Create, manage, and publish beautiful blog posts with ease. No backend required!</p>
+                <div class="hero-actions">
+                    <a href="#editor" class="btn btn-primary btn-large">
+                        <i class="fas fa-plus"></i> Create New Post
+                    </a>
+                    <a href="#posts" class="btn btn-secondary btn-large">
+                        <i class="fas fa-newspaper"></i> Browse Posts
+                    </a>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-file-alt"></i> Total Posts</h3>
+                    <div class="dashboard-value" id="total-posts">0</div>
+                    <p>Published articles</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-eye"></i> Total Views</h3>
+                    <div class="dashboard-value" id="total-views">0</div>
+                    <p>Combined post views</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-tags"></i> Categories</h3>
+                    <div class="dashboard-value" id="total-categories">0</div>
+                    <p>Unique categories</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3><i class="fas fa-calendar"></i> Latest Post</h3>
+                    <div class="dashboard-value" id="latest-post-date">-</div>
+                    <p>Most recent publication</p>
+                </div>
+            </div>
+
+            <section class="recent-posts">
+                <h2><i class="fas fa-history"></i> Recent Posts</h2>
+                <div id="recent-posts-container" class="posts-grid">
+                    <!-- Recent posts will be loaded here -->
+                    <div class="empty-state">
+                        <i class="fas fa-feather-alt"></i>
+                        <h3>No posts yet</h3>
+                        <p>Create your first blog post to get started!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- All Posts Page -->
+        <div id="posts-page" class="page">
+            <div class="page-header">
+                <h1><i class="fas fa-newspaper"></i> All Blog Posts</h1>
+                <div class="page-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="post-search" placeholder="Search posts...">
+                    </div>
+                    <select id="category-filter" class="filter-select">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select id="sort-posts" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="views">Most Views</option>
+                        <option value="title">Title A-Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="all-posts-container" class="posts-container">
+                <!-- All posts will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Editor Page -->
+        <div id="editor-page" class="page">
+            <div class="page-header">
+                <h1><i class="fas fa-edit"></i> Editor</h1>
+                <div class="editor-actions">
+                    <button id="preview-toggle" class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button id="save-draft" class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Save Draft
+                    </button>
+                    <button id="publish-post" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Publish
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-sidebar">
+                    <div class="form-group">
+                        <label for="post-title"><i class="fas fa-heading"></i> Post Title</label>
+                        <input type="text" id="post-title" placeholder="Enter post title..." maxlength="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-excerpt"><i class="fas fa-quote-right"></i> Excerpt</label>
+                        <textarea id="post-excerpt" placeholder="Brief description of your post..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="post-category"><i class="fas fa-tag"></i> Category</label>
+                        <div class="category-selector">
+                            <select id="post-category">
+                                <option value="">Select Category</option>
+                            </select>
+                            <button type="button" id="add-category" class="btn btn-sm">
+                                <i class="fas fa-plus"></i> New
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-tags"></i> Tags</label>
+                        <div class="tags-input-container">
+                            <div id="tags-container" class="tags-container"></div>
+                            <input type="text" id="tag-input" placeholder="Add a tag and press Enter">
+                        </div>
+                        <div class="tag-suggestions">
+                            <small>Popular: <span class="tag-suggestion">webdev</span>, 
+                            <span class="tag-suggestion">javascript</span>, 
+                            <span class="tag-suggestion">tutorial</span></small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featured-image"><i class="fas fa-image"></i> Featured Image URL</label>
+                        <input type="url" id="featured-image" placeholder="https://example.com/image.jpg">
+                        <div class="image-preview" id="image-preview">
+                            <div class="image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <span>No image selected</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-status">
+                        <h4><i class="fas fa-info-circle"></i> Post Status</h4>
+                        <div class="status-options">
+                            <label class="status-option">
+                                <input type="radio" name="status" value="draft" checked> Draft
+                            </label>
+                            <label class="status-option">
+                                <input type="radio" name="status" value="published"> Published
+                            </label>
+                        </div>
+                        <div class="post-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span id="post-date">Today</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-eye"></i>
+                                <span id="post-views">0 views</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-pencil-alt"></i>
+                                <span id="post-length">0 words</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-main">
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" data-command="bold" title="Bold">
+                            <i class="fas fa-bold"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="italic" title="Italic">
+                            <i class="fas fa-italic"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Bullet List">
+                            <i class="fas fa-list-ul"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numbered List">
+                            <i class="fas fa-list-ol"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="createLink" title="Insert Link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="h2" title="Heading">
+                            <i class="fas fa-heading"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="formatBlock" data-value="blockquote" title="Quote">
+                            <i class="fas fa-quote-right"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" data-command="insertHorizontalRule" title="Horizontal Line">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" id="insert-code" title="Code Block">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" id="insert-image" title="Insert Image">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button type="button" class="toolbar-btn" id="clear-formatting" title="Clear Formatting">
+                            <i class="fas fa-eraser"></i>
+                        </button>
+                    </div>
+
+                    <div class="editor-wrapper">
+                        <div id="editor-content" class="editor-content" contenteditable="true" 
+                             placeholder="Start writing your blog post here... You can use rich text formatting.">
+                        </div>
+                        <div id="editor-preview" class="editor-preview" style="display: none;"></div>
+                    </div>
+
+                    <div class="editor-help">
+                        <h4><i class="fas fa-lightbulb"></i> Tips for Great Content</h4>
+                        <ul>
+                            <li>Use clear headings to structure your post</li>
+                            <li>Add images to make your content more engaging</li>
+                            <li>Keep paragraphs short and readable</li>
+                            <li>Use bullet points for lists</li>
+                            <li>Preview your post before publishing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="current-post-id" value="">
+        </div>
+
+        <!-- Categories Page -->
+        <div id="categories-page" class="page">
+            <div class="page-header">
+                <h1><i class="fas fa-tags"></i> Categories & Tags</h1>
+                <div class="page-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="category-search" placeholder="Search categories...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="categories-container">
+                <div class="manage-categories">
+                    <h2><i class="fas fa-plus-circle"></i> Manage Categories</h2>
+                    <div class="category-form">
+                        <input type="text" id="new-category" placeholder="Enter new category name">
+                        <button id="add-category-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
+                    <div id="categories-list" class="categories-list">
+                        <!-- Categories will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="popular-tags">
+                    <h2><i class="fas fa-hashtag"></i> Popular Tags</h2>
+                    <div id="tags-cloud" class="tags-cloud">
+                        <!-- Tags will be loaded here -->
+                    </div>
+                    <div class="tags-stats">
+                        <h3><i class="fas fa-chart-pie"></i> Tag Statistics</h3>
+                        <div id="tag-stats-container">
+                            <!-- Tag stats will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Page -->
+        <div id="stats-page" class="page">
+            <div class="page-header">
+                <h1><i class="fas fa-chart-bar"></i> Blog Analytics</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card wide">
+                    <h3><i class="fas fa-calendar-alt"></i> Posts Over Time</h3>
+                    <div class="chart-container">
+                        <canvas id="posts-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3><i class="fas fa-star"></i> Top Categories</h3>
+                    <div id="top-categories" class="top-list">
+                        <!-- Top categories will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <h3><i class="fas fa-fire"></i> Most Popular Posts</h3>
+                    <div id="popular-posts" class="top-list">
+                        <!-- Popular posts will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="stat-card wide">
+                    <h3><i class="fas fa-chart-line"></i> Engagement Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Average Post Length</div>
+                            <div class="metric-value" id="avg-post-length">0 words</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Posts per Month</div>
+                            <div class="metric-value" id="posts-per-month">0</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Draft Ratio</div>
+                            <div class="metric-value" id="draft-ratio">0%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Most Active Day</div>
+                            <div class="metric-value" id="active-day">None</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Detail Modal -->
+        <div id="post-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Post Title</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="post-meta-modal">
+                        <span class="post-category-modal" id="modal-category"></span>
+                        <span class="post-date-modal" id="modal-date"></span>
+                        <span class="post-views-modal" id="modal-views"></span>
+                    </div>
+                    <div class="post-content-modal" id="modal-content">
+                        <!-- Post content will be loaded here -->
+                    </div>
+                    <div class="post-tags-modal" id="modal-tags"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="modal-edit">
+                        <i class="fas fa-edit"></i> Edit Post
+                    </button>
+                    <button class="btn btn-danger" id="modal-delete">
+                        <i class="fas fa-trash"></i> Delete Post
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div id="confirm-modal" class="modal">
+            <div class="modal-content confirm-modal">
+                <div class="modal-header">
+                    <h3>Confirm Action</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message">Are you sure you want to perform this action?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+                    <button class="btn btn-primary" id="confirm-ok">OK</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-blog"></i> BlogCMS</h3>
+                    <p>A lightweight, client-side Content Management System for personal blogging.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#home">Home</a>
+                    <a href="#posts">All Posts</a>
+                    <a href="#editor">New Post</a>
+                    <a href="#stats">Analytics</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <p>Rich Text Editor</p>
+                    <p>Category Management</p>
+                    <p>Local Storage</p>
+                    <p>Responsive Design</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BlogCMS | Intermediate Project #4 | All data is stored locally in your browser</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
