@@ -1,12 +1,46 @@
 // BlogCMS - Content Management System
 class BlogCMS {
     constructor() {
-        this.posts = JSON.parse(localStorage.getItem('blogPosts')) || [];
+        // Initialize with sample data if empty
+        if (!localStorage.getItem('blogPosts')) {
+            this.posts = [
+                {
+                    id: '1',
+                    title: 'Welcome to BlogCMS',
+                    excerpt: 'A powerful client-side content management system',
+                    content: '<h2>Welcome to Your New Blog!</h2><p>This is a fully functional Blog/CMS system that runs entirely in your browser. All your data is stored locally using localStorage.</p><p>You can:</p><ul><li>Create rich text blog posts</li><li>Organize by categories and tags</li><li>View analytics and statistics</li><li>Manage all content in one place</li></ul><pre><code>// Example code block\nconsole.log("Welcome to BlogCMS!");</code></pre>',
+                    category: 'Welcome',
+                    tags: ['welcome', 'blog', 'cms'],
+                    featuredImage: '',
+                    status: 'published',
+                    views: 15,
+                    createdAt: new Date().toISOString(),
+                    wordCount: 120
+                },
+                {
+                    id: '2',
+                    title: 'Getting Started with JavaScript',
+                    excerpt: 'Learn the basics of JavaScript programming',
+                    content: '<h2>JavaScript Fundamentals</h2><p>JavaScript is a versatile programming language that powers the modern web.</p><h3>Variables</h3><pre><code>let message = "Hello World";\nconst PI = 3.14159;\nvar oldVariable = "Deprecated";</code></pre><p>Start your JavaScript journey today!</p>',
+                    category: 'Programming',
+                    tags: ['javascript', 'webdev', 'tutorial'],
+                    featuredImage: '',
+                    status: 'published',
+                    views: 28,
+                    createdAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+                    wordCount: 85
+                }
+            ];
+            localStorage.setItem('blogPosts', JSON.stringify(this.posts));
+        } else {
+            this.posts = JSON.parse(localStorage.getItem('blogPosts')) || [];
+        }
+        
         this.categories = JSON.parse(localStorage.getItem('blogCategories')) || [
-            'Technology', 'Programming', 'Web Development', 'Design', 'Tutorial', 'Personal'
+            'Technology', 'Programming', 'Web Development', 'Design', 'Tutorial', 'Personal', 'Welcome'
         ];
         this.tags = JSON.parse(localStorage.getItem('blogTags')) || [
-            'javascript', 'webdev', 'tutorial', 'css', 'html', 'react', 'nodejs'
+            'javascript', 'webdev', 'tutorial', 'css', 'html', 'react', 'nodejs', 'welcome', 'blog'
         ];
         this.currentPostId = null;
         this.isEditing = false;
@@ -17,7 +51,7 @@ class BlogCMS {
         this.loadCategories();
         this.loadTags();
         this.updateDashboard();
-        this.loadAllPosts();
+        this.loadRecentPosts();
         this.setupRouting();
     }
 
@@ -26,6 +60,7 @@ class BlogCMS {
         this.navLinks = document.querySelectorAll('.nav-link');
         this.navToggle = document.getElementById('navToggle');
         this.pages = document.querySelectorAll('.page');
+        this.navLogo = document.querySelector('.nav-logo');
         
         // Home Page
         this.totalPostsEl = document.getElementById('total-posts');
@@ -86,6 +121,7 @@ class BlogCMS {
         this.modalTags = document.getElementById('modal-tags');
         this.modalEditBtn = document.getElementById('modal-edit');
         this.modalDeleteBtn = document.getElementById('modal-delete');
+        this.modalClose = document.querySelectorAll('.modal-close');
         
         // Toolbar
         this.toolbarButtons = document.querySelectorAll('.toolbar-btn');
@@ -102,11 +138,28 @@ class BlogCMS {
         this.navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                const page = link.getAttribute('href').substring(1);
+                this.showPage(page);
+                
+                // Update active state
                 this.navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
+                
+                // Close mobile menu if open
+                const navLinks = document.querySelector('.nav-links');
+                navLinks.classList.remove('active');
             });
         });
 
+        // Logo click
+        this.navLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showPage('home');
+            this.navLinks.forEach(l => l.classList.remove('active'));
+            document.querySelector('.nav-link[href="#home"]').classList.add('active');
+        });
+
+        // Mobile menu toggle
         this.navToggle.addEventListener('click', () => {
             const navLinks = document.querySelector('.nav-links');
             navLinks.classList.toggle('active');
@@ -114,13 +167,22 @@ class BlogCMS {
 
         // Editor
         this.postTitle.addEventListener('input', () => this.updatePostStats());
-        this.editorContent.addEventListener('input', () => this.updatePostStats());
+        this.editorContent.addEventListener('input', () => {
+            this.updatePostStats();
+            // Auto-save draft every 30 seconds
+            clearTimeout(this.autoSaveTimer);
+            this.autoSaveTimer = setTimeout(() => {
+                if (!this.isEditing) this.savePost('draft', true);
+            }, 30000);
+        });
+        
         this.featuredImage.addEventListener('input', () => this.updateImagePreview());
         this.previewToggle.addEventListener('click', () => this.togglePreview());
         this.saveDraftBtn.addEventListener('click', () => this.savePost('draft'));
         this.publishBtn.addEventListener('click', () => this.savePost('published'));
         this.addCategoryBtn.addEventListener('click', () => this.showAddCategoryModal());
         this.addCategoryMainBtn.addEventListener('click', () => this.addNewCategory());
+        
         this.tagInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -153,7 +215,7 @@ class BlogCMS {
         this.clearFormattingBtn.addEventListener('click', () => this.clearFormatting());
 
         // Modals
-        document.querySelectorAll('.modal-close').forEach(closeBtn => {
+        this.modalClose.forEach(closeBtn => {
             closeBtn.addEventListener('click', () => this.closeModal());
         });
 
@@ -171,57 +233,58 @@ class BlogCMS {
 
         // Initialize Chart
         this.initializeChart();
+        
+        // Set current date in editor
+        this.updatePostStats();
     }
 
     setupRouting() {
-        // Handle hash changes for SPA navigation
+        // Handle hash changes
         window.addEventListener('hashchange', () => this.handleRoute());
+        // Handle initial load
         this.handleRoute();
     }
 
     handleRoute() {
         const hash = window.location.hash.substring(1) || 'home';
-        const pageId = `${hash}-page`;
-        
-        // Show the correct page
+        this.showPage(hash);
+    }
+
+    showPage(pageName) {
+        // Hide all pages
         this.pages.forEach(page => {
             page.classList.remove('active');
-            if (page.id === pageId) {
-                page.classList.add('active');
-            }
         });
         
-        // Update active nav link
-        this.navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${hash}`) {
-                link.classList.add('active');
+        // Show the requested page
+        const pageId = `${pageName}-page`;
+        const pageElement = document.getElementById(pageId);
+        if (pageElement) {
+            pageElement.classList.add('active');
+            
+            // Update URL hash without triggering navigation
+            history.replaceState(null, null, `#${pageName}`);
+            
+            // Load page-specific content
+            switch(pageName) {
+                case 'home':
+                    this.updateDashboard();
+                    this.loadRecentPosts();
+                    break;
+                case 'posts':
+                    this.loadAllPosts();
+                    break;
+                case 'editor':
+                    this.clearEditor();
+                    break;
+                case 'categories':
+                    this.loadCategories();
+                    this.loadTags();
+                    break;
+                case 'stats':
+                    this.updateStats();
+                    break;
             }
-        });
-        
-        // Close mobile menu
-        const navLinks = document.querySelector('.nav-links');
-        navLinks.classList.remove('active');
-        
-        // Handle specific page setup
-        switch (hash) {
-            case 'home':
-                this.updateDashboard();
-                this.loadRecentPosts();
-                break;
-            case 'posts':
-                this.loadAllPosts();
-                break;
-            case 'editor':
-                this.clearEditor();
-                break;
-            case 'categories':
-                this.loadCategories();
-                this.loadTags();
-                break;
-            case 'stats':
-                this.updateStats();
-                break;
         }
     }
 
@@ -273,7 +336,7 @@ class BlogCMS {
     incrementViews(id) {
         const post = this.getPost(id);
         if (post) {
-            post.views++;
+            post.views = (post.views || 0) + 1;
             this.saveData();
         }
     }
@@ -294,7 +357,7 @@ class BlogCMS {
     insertImage() {
         const url = prompt('Enter image URL:');
         if (url) {
-            const img = `<img src="${url}" alt="Image" style="max-width: 100%;">`;
+            const img = `<img src="${url}" alt="Image" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;">`;
             document.execCommand('insertHTML', false, img);
         }
     }
@@ -321,17 +384,14 @@ class BlogCMS {
     }
 
     formatContent(content) {
-        // Convert simple formatting to proper HTML
-        return content
-            .replace(/&lt;pre&gt;&lt;code&gt;/g, '<pre><code>')
-            .replace(/&lt;\/code&gt;&lt;\/pre&gt;/g, '</code></pre>')
-            .replace(/&lt;code&gt;/g, '<code>')
-            .replace(/&lt;\/code&gt;/g, '</code>')
-            .replace(/&lt;img/g, '<img')
-            .replace(/&gt;/g, '>')
+        // Convert special characters to proper HTML
+        let formatted = content
             .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
             .replace(/&quot;/g, '"')
             .replace(/&amp;/g, '&');
+        
+        return formatted;
     }
 
     highlightCode() {
@@ -421,28 +481,28 @@ class BlogCMS {
     }
 
     // Data Management
-    savePost(status = 'draft') {
+    savePost(status = 'draft', autoSave = false) {
         const title = this.postTitle.value.trim();
         const excerpt = this.postExcerpt.value.trim();
         const content = this.editorContent.innerHTML;
         const category = this.postCategory.value;
         const featuredImage = this.featuredImage.value;
         
-        if (!title) {
+        if (!title && !autoSave) {
             this.showNotification('Please enter a post title', 'error');
             return;
         }
         
-        if (!content || content === '<br>') {
+        if ((!content || content === '<br>') && !autoSave) {
             this.showNotification('Please enter some content', 'error');
             return;
         }
         
         const postData = {
             id: this.currentPostId || Date.now().toString(),
-            title,
+            title: title || 'Untitled',
             excerpt: excerpt || this.generateExcerpt(content),
-            content,
+            content: content || '<p>Start writing your post...</p>',
             category: category || 'Uncategorized',
             tags: this.currentTags,
             featuredImage,
@@ -453,8 +513,10 @@ class BlogCMS {
         if (this.currentPostId) {
             // Update existing post
             const existingPost = this.getPost(this.currentPostId);
-            postData.views = existingPost.views;
-            postData.createdAt = existingPost.createdAt;
+            if (existingPost) {
+                postData.views = existingPost.views;
+                postData.createdAt = existingPost.createdAt;
+            }
         }
         
         this.createPost(postData);
@@ -462,8 +524,8 @@ class BlogCMS {
         if (status === 'published') {
             this.showNotification('Post published successfully!', 'success');
             this.clearEditor();
-            window.location.hash = 'posts';
-        } else {
+            this.showPage('posts');
+        } else if (!autoSave) {
             this.showNotification('Draft saved successfully!', 'success');
         }
     }
@@ -481,6 +543,15 @@ class BlogCMS {
         this.updateImagePreview();
         this.updatePostStats();
         this.publishBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Publish';
+        
+        // Set default category
+        this.postCategory.value = '';
+        
+        // Set default status to draft
+        document.querySelector('input[name="status"][value="draft"]').checked = true;
+        
+        // Focus on title
+        setTimeout(() => this.postTitle.focus(), 100);
     }
 
     editPost(id) {
@@ -502,11 +573,11 @@ class BlogCMS {
         this.updateImagePreview();
         this.updatePostStats();
         
-        window.location.hash = 'editor';
+        this.showPage('editor');
         this.publishBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Update';
         
         // Set status radio button
-        document.querySelector(`input[name="status"][value="${post.status}"]`).checked = true;
+        document.querySelector(`input[name="status"][value="${post.status}"]`)?.checked = true;
     }
 
     // UI Rendering
@@ -530,7 +601,7 @@ class BlogCMS {
             <div class="post-card" data-id="${post.id}">
                 <div class="post-image">
                     ${post.featuredImage ? 
-                        `<img src="${post.featuredImage}" alt="${post.title}">` :
+                        `<img src="${post.featuredImage}" alt="${post.title}" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-newspaper\\'></i>';">` :
                         `<i class="fas fa-newspaper"></i>`
                     }
                 </div>
@@ -572,7 +643,7 @@ class BlogCMS {
             <div class="post-card" data-id="${post.id}">
                 <div class="post-image">
                     ${post.featuredImage ? 
-                        `<img src="${post.featuredImage}" alt="${post.title}">` :
+                        `<img src="${post.featuredImage}" alt="${post.title}" onerror="this.parentElement.innerHTML='<i class=\\'fas fa-newspaper\\'></i>';">` :
                         `<i class="fas fa-newspaper"></i>`
                     }
                 </div>
@@ -586,7 +657,7 @@ class BlogCMS {
                         </div>
                         <div class="post-meta-right">
                             <span class="post-status ${post.status}">${post.status}</span>
-                            <span class="post-views"><i class="fas fa-eye"></i> ${post.views}</span>
+                            <span class="post-views"><i class="fas fa-eye"></i> ${post.views || 0}</span>
                         </div>
                     </div>
                 </div>
@@ -610,8 +681,9 @@ class BlogCMS {
         if (searchTerm) {
             filtered = filtered.filter(post => 
                 post.title.toLowerCase().includes(searchTerm) ||
-                post.excerpt.toLowerCase().includes(searchTerm) ||
-                post.content.toLowerCase().includes(searchTerm)
+                (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm)) ||
+                post.content.toLowerCase().includes(searchTerm) ||
+                (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchTerm)))
             );
         }
         
@@ -631,7 +703,7 @@ class BlogCMS {
                 filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
                 break;
             case 'views':
-                filtered.sort((a, b) => b.views - a.views);
+                filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
                 break;
             case 'title':
                 filtered.sort((a, b) => a.title.localeCompare(b.title));
@@ -659,9 +731,11 @@ class BlogCMS {
         // Calculate tag frequency
         const tagFrequency = {};
         this.posts.forEach(post => {
-            post.tags?.forEach(tag => {
-                tagFrequency[tag] = (tagFrequency[tag] || 0) + 1;
-            });
+            if (post.tags) {
+                post.tags.forEach(tag => {
+                    tagFrequency[tag] = (tagFrequency[tag] || 0) + 1;
+                });
+            }
         });
         
         // Sort tags by frequency
@@ -682,7 +756,7 @@ class BlogCMS {
                 const tag = tagEl.dataset.tag;
                 this.postSearch.value = tag;
                 this.filterPosts();
-                window.location.hash = 'posts';
+                this.showPage('posts');
             });
         });
         
@@ -713,49 +787,13 @@ class BlogCMS {
                 </div>
             `;
         }).join('');
-        
-        // Add CSS for tag stats
-        const style = document.createElement('style');
-        style.textContent = `
-            .tag-stat-item {
-                margin-bottom: 10px;
-            }
-            .tag-stat-info {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 5px;
-                font-size: 0.9rem;
-            }
-            .tag-stat-bar {
-                height: 8px;
-                background: var(--light-gray);
-                border-radius: 4px;
-                overflow: hidden;
-            }
-            .tag-stat-fill {
-                height: 100%;
-                background: linear-gradient(90deg, var(--primary), var(--secondary));
-                border-radius: 4px;
-                transition: width 0.5s ease;
-            }
-            .no-data {
-                text-align: center;
-                color: var(--gray);
-                font-style: italic;
-                padding: 20px;
-            }
-        `;
-        if (!document.querySelector('#tag-stats-style')) {
-            style.id = 'tag-stats-style';
-            document.head.appendChild(style);
-        }
     }
 
     // Dashboard & Stats
     updateDashboard() {
         const publishedPosts = this.posts.filter(post => post.status === 'published');
-        const totalViews = publishedPosts.reduce((sum, post) => sum + post.views, 0);
-        const categories = [...new Set(this.posts.map(post => post.category))];
+        const totalViews = publishedPosts.reduce((sum, post) => sum + (post.views || 0), 0);
+        const categories = [...new Set(this.posts.map(post => post.category).filter(Boolean))];
         
         this.totalPostsEl.textContent = publishedPosts.length;
         this.totalViewsEl.textContent = totalViews.toLocaleString();
@@ -779,7 +817,9 @@ class BlogCMS {
         // Top Categories
         const categoryCounts = {};
         publishedPosts.forEach(post => {
-            categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+            if (post.category) {
+                categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+            }
         });
         
         const topCategories = Object.entries(categoryCounts)
@@ -795,13 +835,13 @@ class BlogCMS {
         
         // Popular Posts
         const popularPosts = [...publishedPosts]
-            .sort((a, b) => b.views - a.views)
+            .sort((a, b) => (b.views || 0) - (a.views || 0))
             .slice(0, 5);
         
         this.popularPosts.innerHTML = popularPosts.map(post => `
             <div class="top-item" data-id="${post.id}" style="cursor: pointer;">
                 <span>${post.title.substring(0, 30)}${post.title.length > 30 ? '...' : ''}</span>
-                <span class="top-count">${post.views} views</span>
+                <span class="top-count">${post.views || 0} views</span>
             </div>
         `).join('');
         
@@ -825,8 +865,8 @@ class BlogCMS {
             postsByMonth[monthYear] = (postsByMonth[monthYear] || 0) + 1;
         });
         
-        const avgPostsPerMonth = Object.values(postsByMonth).reduce((sum, count) => sum + count, 0) / 
-            (Object.keys(postsByMonth).length || 1);
+        const avgPostsPerMonth = Object.keys(postsByMonth).length > 0 ? 
+            Object.values(postsByMonth).reduce((sum, count) => sum + count, 0) / Object.keys(postsByMonth).length : 0;
         
         // Draft ratio
         const draftCount = this.posts.filter(post => post.status === 'draft').length;
@@ -860,7 +900,10 @@ class BlogCMS {
     }
 
     initializeChart() {
-        const ctx = document.getElementById('posts-chart').getContext('2d');
+        const ctx = document.getElementById('posts-chart');
+        if (!ctx) return;
+        
+        ctx.getContext('2d');
         this.postsChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -897,7 +940,10 @@ class BlogCMS {
     }
 
     updateChart(postsByMonth) {
-        if (!this.postsChart) return;
+        if (!this.postsChart) {
+            this.initializeChart();
+            if (!this.postsChart) return;
+        }
         
         const months = Object.keys(postsByMonth).sort();
         const counts = months.map(month => postsByMonth[month]);
@@ -926,7 +972,7 @@ class BlogCMS {
         this.modalTitle.textContent = post.title;
         this.modalCategory.textContent = post.category;
         this.modalDate.textContent = this.formatDate(post.createdAt);
-        this.modalViews.textContent = `${post.views + 1} views`;
+        this.modalViews.textContent = `${(post.views || 0) + 1} views`;
         this.modalContent.innerHTML = this.formatContent(post.content);
         this.modalTags.innerHTML = (post.tags || []).map(tag => 
             `<span class="tag">${tag}</span>`
@@ -977,6 +1023,7 @@ class BlogCMS {
 
     closeModal() {
         this.postModal.classList.remove('active');
+        this.confirmModal.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
 
@@ -996,10 +1043,13 @@ class BlogCMS {
 
     countWords(text) {
         const plainText = text.replace(/<[^>]*>/g, ' ');
-        return plainText.trim().split(/\s+/).filter(word => word.length > 0).length;
+        const words = plainText.trim().split(/\s+/).filter(word => word.length > 0);
+        return words.length;
     }
 
     formatDate(dateString, format = 'medium') {
+        if (!dateString) return 'Unknown date';
+        
         const date = new Date(dateString);
         const now = new Date();
         const diffTime = Math.abs(now - date);
@@ -1043,10 +1093,11 @@ class BlogCMS {
 
     updateImagePreview() {
         const url = this.featuredImage.value;
+        const preview = document.getElementById('image-preview');
         if (url) {
-            this.imagePreview.innerHTML = `<img src="${url}" alt="Preview" onerror="this.style.display='none'">`;
+            preview.innerHTML = `<img src="${url}" alt="Preview" onerror="this.onerror=null; this.src='';">`;
         } else {
-            this.imagePreview.innerHTML = `
+            preview.innerHTML = `
                 <div class="image-placeholder">
                     <i class="fas fa-image"></i>
                     <span>No image selected</span>
@@ -1068,46 +1119,16 @@ class BlogCMS {
             <span>${message}</span>
         `;
         
-        // Add styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 8px;
-                color: white;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                z-index: 3000;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-                animation: slideInRight 0.3s ease;
-            }
-            .notification-success {
-                background: linear-gradient(135deg, var(--success), #059669);
-            }
-            .notification-error {
-                background: linear-gradient(135deg, var(--danger), #dc2626);
-            }
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes fadeOut {
-                from { opacity: 1; }
-                to { opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-        
         document.body.appendChild(notification);
         
         // Auto remove after 3 seconds
         setTimeout(() => {
             notification.style.animation = 'fadeOut 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
         }, 3000);
     }
 
@@ -1124,4 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Make blogCMS available globally for debugging
     window.blogCMS = blogCMS;
+    
+    // Initialize highlight.js
+    hljs.highlightAll();
 });
