@@ -12,8 +12,6 @@ A fully-featured blog and content management system built with pure HTML, CSS, a
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-blue?style=for-the-badge&logo=github)](https://elagiaunified.github.io/intermediate-projects/blog-cms/)
 
-*Replace with your actual GitHub Pages URL*
-
 ## ✨ Features
 
 ### 📱 **Frontend Blog**
