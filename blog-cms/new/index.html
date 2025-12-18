@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple CMS Demo</title>
+
+  <!-- Link the stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <h1 id="site-title">My Simple CMS</h1>
+    <nav id="site-nav"></nav>
+  </header>
+
+  <!-- Main content area – will be filled by JavaScript -->
+  <main id="content"></main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> My CMS Demo</p>
+  </footer>
+
+  <!-- Load the script last (defer works too) -->
+  <script src="app.js"></script>
+</body>
+</html>
