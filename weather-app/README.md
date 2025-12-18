@@ -48,12 +48,13 @@ A professional weather application that provides real-time forecasts, 5-day pred
 - **Monitor Air Quality**: View AQI and UV index in the analytics section
 
 ## 🏗️ Project Structure
+```
 weather-app/
 ├── index.html # Main application structure
 ├── style.css # Styling, animations, responsive design
 ├── script.js # Weather logic, API calls, UI updates
 └── README.md # This documentation
-
+```
 ## 🔧 Technical Implementation
 
 ### **API Integration**
