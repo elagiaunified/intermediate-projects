@@ -72,12 +72,13 @@ A comprehensive multi-currency expense tracking application with real-time excha
 - Update Rates: Manually refresh exchange rates
 
 ## 🏗️ Project Structure
-- expense-tracker/
-- ├── index.html          # Main application interface
-- ├── style.css           # Styling, layouts, animations
-- ├── script.js           # Core logic, API calls, features
-- └── README.md           # This documentation
-
+```
+expense-tracker/
+├── index.html          # Main application interface
+├── style.css           # Styling, layouts, animations
+├── script.js           # Core logic, API calls, features
+└── README.md           # This documentation
+```
 ## 🔧 Technical Implementation
 API Integration
 - Uses ExchangeRate-API (free tier, no API key required for basic usage):
