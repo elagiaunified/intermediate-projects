@@ -50,12 +50,13 @@ A comprehensive recipe search application with meal planning, favorites system, 
 - Watch YouTube video tutorials (when available)
 
 ## 🏗️ Project Structure
-- recipe-finder/
-- ├── index.html # Main application interface
-- ├── style.css # Styling, layouts, animations
-- ├── script.js # Recipe logic, API calls, features
-- └── README.md # This documentation
-
+```
+recipe-finder/
+├── index.html # Main application interface
+├── style.css # Styling, layouts, animations
+├── script.js # Recipe logic, API calls, features
+└── README.md # This documentation
+```
 ## 🔧 Technical Implementation
 
 ### **API Integration**
