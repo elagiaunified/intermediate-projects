@@ -66,15 +66,15 @@ cd intermediate-projects/weather-app
 For APIs requiring keys, follow the project-specific instructions
 
 ## 📁 Project Structure
-
-- intermediate-projects/
-- ├── weather-app/          # Project 1: Real-time weather application
-- ├── recipe-finder/       # Project 2: Recipe search with meal planning
-- ├── expense-tracker/     # Project 3: Financial tracking (in progress)
-- ├── blog-cms/           # Project 4: Content management system
-- ├── chat-app/           # Project 5: Real-time chat interface
-- └── README.md           # This file
-
+```
+intermediate-projects/
+├── weather-app/          # Project 1: Real-time weather application
+├── recipe-finder/       # Project 2: Recipe search with meal planning
+├── expense-tracker/     # Project 3: Financial tracking (in progress)
+├── blog-cms/           # Project 4: Content management system
+├── chat-app/           # Project 5: Real-time chat interface
+└── README.md           # This file
+```
 ## 🛠️ Technologies Used
 ### Core Technologies
 - HTML5: Semantic markup and structure
