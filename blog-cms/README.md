@@ -77,20 +77,20 @@ A fully-featured blog and content management system built with pure HTML, CSS, a
 3. Visit `https://elagiaunified.github.io/intermediate-projects/blog-cms/`
 
 ## 📁 Project Structure
-
-- blog-cms/
-- ├── index.html              # Public blog homepage
-- ├── admin.html              # Admin dashboard
-- ├── editor.html             # Standalone markdown editor
-- ├── post.html               # Single post view page
-- ├── style.css               # Shared CSS styles (2800+ lines)
-- ├── script.js               # Core database & utilities
-- ├── blog.js                 # Public blog functionality
-- ├── admin.js                # Admin dashboard functionality
-- ├── editor.js               # Editor-specific functionality
-- ├── README.md               # This documentation
-- └── assets/                 # Optional: Images and assets
-
+```
+blog-cms/
+├── index.html              # Public blog homepage
+├── admin.html              # Admin dashboard
+├── editor.html             # Standalone markdown editor
+├── post.html               # Single post view page
+├── style.css               # Shared CSS styles (2800+ lines)
+├── script.js               # Core database & utilities
+├── blog.js                 # Public blog functionality
+├── admin.js                # Admin dashboard functionality
+├── editor.js               # Editor-specific functionality
+├── README.md               # This documentation
+└── assets/                 # Optional: Images and assets
+```
 ## 🔧 Usage Guide
 1. Viewing the Blog
 - Open index.html to see the public blog
