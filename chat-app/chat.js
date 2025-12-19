@@ -56,6 +56,7 @@ let isTyping = false;
 let typingTimeout = null;
 let emojiPickerVisible = false;
 let messageCheckInterval = null;
+let lastMessageId = null; // Track the last message ID to avoid duplicates
 
 // Initialize the chat application
 function initChat() {
@@ -282,7 +283,7 @@ function createRoomItem(room) {
         </div>
         <div class="room-info">
             <h5>${room.name}</h5>
-            <p class="last-message">${lastMessage ? lastMessage.text : 'No messages yet'}</p>
+            <p class="last-message">${lastMessage ? lastMessage.text.substring(0, 30) + (lastMessage.text.length > 30 ? '...' : '') : 'No messages yet'}</p>
         </div>
         <div class="room-meta">
             ${room.unreadCount > 0 ? `<span class="unread-count">${room.unreadCount}</span>` : ''}
@@ -356,8 +357,13 @@ function loadRoom(roomId) {
     } else {
         // Display all messages
         messages.forEach(message => {
-            addMessageToUI(message);
+            addMessageToUI(message, false); // false = don't add to storage
         });
+    }
+    
+    // Update last message ID
+    if (messages.length > 0) {
+        lastMessageId = messages[messages.length - 1].id;
     }
     
     // Scroll to bottom
@@ -383,7 +389,7 @@ function addSystemMessage(text) {
     };
     
     addMessageToStorage(message);
-    addMessageToUI(message);
+    addMessageToUI(message, false); // false = don't add to storage (already done)
 }
 
 // Add message to localStorage
@@ -391,12 +397,27 @@ function addMessageToStorage(message) {
     const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
     allMessages.push(message);
     localStorage.setItem('chatMessages', JSON.stringify(allMessages));
+    
+    // Update last message ID
+    lastMessageId = message.id;
 }
 
 // Add message to UI
-function addMessageToUI(message) {
+function addMessageToUI(message, addToStorage = true) {
+    // First, check if this message already exists in the UI
+    const existingMessage = document.querySelector(`[data-message-id="${message.id}"]`);
+    if (existingMessage) {
+        return; // Message already displayed, don't add again
+    }
+    
     const messageElement = createMessageElement(message);
     messagesContainer.appendChild(messageElement);
+    
+    // Add to storage if requested
+    if (addToStorage) {
+        addMessageToStorage(message);
+    }
+    
     scrollToBottom();
 }
 
@@ -470,25 +491,29 @@ function setupChatEventListeners() {
     sendBtn.addEventListener('click', sendMessage);
     
     // Send message on Enter key (Shift+Enter for new line)
-    messageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-        
-        // Show typing indicator
-        if (!isTyping) {
-            isTyping = true;
-            updateTypingIndicator();
-        }
-        
-        // Reset typing timeout
-        clearTimeout(typingTimeout);
-        typingTimeout = setTimeout(() => {
-            isTyping = false;
-            updateTypingIndicator();
-        }, 1000);
-    });
+    // Note: Since we're using emojionearea, we need to attach to the actual input
+    const messageInputField = document.querySelector('.emojionearea-editor');
+    if (messageInputField) {
+        messageInputField.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+            
+            // Show typing indicator
+            if (!isTyping) {
+                isTyping = true;
+                updateTypingIndicator();
+            }
+            
+            // Reset typing timeout
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+                updateTypingIndicator();
+            }, 1000);
+        });
+    }
     
     // Emoji picker
     emojiBtn.addEventListener('click', toggleEmojiPicker);
@@ -555,34 +580,72 @@ function setupChatEventListeners() {
             hideUserMenu();
         }
     });
+    
+    // Initialize emojionearea
+    $(document).ready(function() {
+        if ($('#messageInput').length) {
+            $('#messageInput').emojioneArea({
+                pickerPosition: 'top',
+                tonesStyle: 'bullet',
+                events: {
+                    keyup: function() {
+                        // Show typing indicator
+                        if (!isTyping) {
+                            isTyping = true;
+                            updateTypingIndicator();
+                        }
+                        
+                        // Reset typing timeout
+                        clearTimeout(typingTimeout);
+                        typingTimeout = setTimeout(() => {
+                            isTyping = false;
+                            updateTypingIndicator();
+                        }, 1000);
+                    }
+                }
+            });
+        }
+    });
 }
 
 // Send message
 function sendMessage() {
-    const text = messageInput.innerText.trim();
+    const emojioneArea = $('.emojionearea-editor');
+    let text = '';
+    
+    if (emojioneArea.length) {
+        text = emojioneArea[0].innerText.trim();
+    } else {
+        text = messageInput.innerText.trim();
+    }
     
     if (!text && selectedFiles.length === 0) {
         showToast('Please enter a message or attach a file', 'error');
         return;
     }
     
-    // Create message object
-    const message = {
-        id: generateId(),
-        roomId: currentRoomId,
-        sender: currentUser.username,
-        senderName: currentUser.name || currentUser.username,
-        text: text,
-        timestamp: new Date().toISOString(),
-        type: 'text'
-    };
-    
-    // Add message to storage and UI
-    addMessageToStorage(message);
-    addMessageToUI(message);
-    
-    // Clear input
-    messageInput.innerText = '';
+    // Create message object for text
+    if (text) {
+        const message = {
+            id: generateId(),
+            roomId: currentRoomId,
+            sender: currentUser.username,
+            senderName: currentUser.name || currentUser.username,
+            text: text,
+            timestamp: new Date().toISOString(),
+            type: 'text'
+        };
+        
+        // Add message to UI (this will also add to storage)
+        addMessageToUI(message);
+        
+        // Clear input
+        if (emojioneArea.length) {
+            emojioneArea[0].innerText = '';
+        } else {
+            messageInput.innerText = '';
+        }
+    }
     
     // Send files if any
     if (selectedFiles.length > 0) {
@@ -596,8 +659,13 @@ function sendMessage() {
     // Scroll to bottom
     scrollToBottom();
     
-    // Simulate other users responding
-    simulateResponses();
+    // Update rooms list to show last message
+    updateRoomsList();
+    
+    // Simulate other users responding (only if we sent a text message)
+    if (text) {
+        simulateResponses();
+    }
 }
 
 // Send file message
@@ -615,7 +683,6 @@ function sendFileMessage(file) {
         type: 'file'
     };
     
-    addMessageToStorage(message);
     addMessageToUI(message);
 }
 
@@ -702,6 +769,9 @@ function sendSelectedFiles() {
     
     // Scroll to bottom
     scrollToBottom();
+    
+    // Update rooms list
+    updateRoomsList();
 }
 
 // Update typing indicator
@@ -779,9 +849,13 @@ function initEmojiPicker() {
 
 // Insert emoji into message input
 function insertEmoji(emoji) {
-    const textNode = document.createTextNode(emoji);
-    messageInput.appendChild(textNode);
-    messageInput.focus();
+    const emojioneArea = $('.emojionearea-editor');
+    if (emojioneArea.length) {
+        const editor = emojioneArea[0];
+        const textNode = document.createTextNode(emoji);
+        editor.appendChild(textNode);
+        editor.focus();
+    }
     
     // Hide emoji picker after selection
     hideEmojiPicker();
@@ -905,7 +979,7 @@ function startQuickTour() {
     const tourSteps = [
         { element: roomsList, text: 'This is where you can see and switch between chat rooms' },
         { element: usersList, text: 'Here you can see who is online and their status' },
-        { element: messageInput, text: 'Type your messages here and press Enter to send' },
+        { element: document.querySelector('.emojionearea-editor'), text: 'Type your messages here and press Enter to send' },
         { element: emojiBtn, text: 'Click here to add emojis to your messages' },
         { element: attachBtn, text: 'Use this button to share files and images' }
     ];
@@ -921,15 +995,19 @@ function startQuickTour() {
         const { element, text } = tourSteps[step];
         
         // Highlight element
-        element.style.boxShadow = '0 0 0 3px #6a11cb';
-        element.style.transition = 'box-shadow 0.3s ease';
+        if (element) {
+            element.style.boxShadow = '0 0 0 3px #6a11cb';
+            element.style.transition = 'box-shadow 0.3s ease';
+        }
         
         // Show tooltip
         showToast(text, 'info');
         
         // Remove highlight after delay
         setTimeout(() => {
-            element.style.boxShadow = '';
+            if (element) {
+                element.style.boxShadow = '';
+            }
             step++;
             showTourStep();
         }, 3000);
@@ -968,7 +1046,7 @@ function searchMessages() {
         messagesContainer.appendChild(noResults);
     } else {
         filteredMessages.forEach(message => {
-            addMessageToUI(message);
+            addMessageToUI(message, false); // Don't add to storage
         });
     }
 }
@@ -976,33 +1054,80 @@ function searchMessages() {
 // Start message checker (simulates real-time updates)
 function startMessageChecker() {
     messageCheckInterval = setInterval(() => {
-        // Check for new messages
+        // Check for new messages in the current room
         const allMessages = JSON.parse(localStorage.getItem('chatMessages')) || [];
-        const newMessages = allMessages.filter(msg => 
-            msg.roomId === currentRoomId && 
-            !messages.some(existing => existing.id === msg.id)
-        );
+        const currentRoomMessages = allMessages.filter(msg => msg.roomId === currentRoomId);
+        
+        // Find messages that are newer than our last known message
+        let newMessages = [];
+        if (lastMessageId) {
+            // Find the index of the last message we know about
+            const lastMessageIndex = currentRoomMessages.findIndex(msg => msg.id === lastMessageId);
+            if (lastMessageIndex !== -1 && lastMessageIndex < currentRoomMessages.length - 1) {
+                // Get all messages after the last one we know
+                newMessages = currentRoomMessages.slice(lastMessageIndex + 1);
+            }
+        } else if (currentRoomMessages.length > 0) {
+            // If we don't have a lastMessageId, check if we have any messages at all
+            newMessages = currentRoomMessages.filter(msg => 
+                !messages.some(existing => existing.id === msg.id)
+            );
+        }
         
         // Add new messages
-        newMessages.forEach(message => {
-            messages.push(message);
-            addMessageToUI(message);
+        if (newMessages.length > 0) {
+            newMessages.forEach(message => {
+                // Check if message is already in UI
+                const existingInUI = document.querySelector(`[data-message-id="${message.id}"]`);
+                if (!existingInUI) {
+                    messages.push(message);
+                    addMessageToUI(message, false); // Don't add to storage (already there)
+                }
+            });
             
-            // Update unread count if not current room
-            if (message.roomId !== currentRoomId) {
-                const roomIndex = rooms.findIndex(r => r.id === message.roomId);
-                if (roomIndex !== -1) {
-                    rooms[roomIndex].unreadCount = (rooms[roomIndex].unreadCount || 0) + 1;
-                    localStorage.setItem('chatRooms', JSON.stringify(rooms));
-                    updateRoomsList();
+            // Update last message ID
+            lastMessageId = currentRoomMessages[currentRoomMessages.length - 1].id;
+            
+            // Update rooms list to show new messages
+            updateRoomsList();
+        }
+        
+        // Check for messages in other rooms to update unread counts
+        rooms.forEach(room => {
+            if (room.id !== currentRoomId) {
+                const roomMessages = allMessages.filter(msg => msg.roomId === room.id);
+                if (roomMessages.length > 0) {
+                    const lastRoomMessage = roomMessages[roomMessages.length - 1];
+                    
+                    // Check if this message is newer than what we've seen
+                    const roomIndex = rooms.findIndex(r => r.id === room.id);
+                    if (roomIndex !== -1) {
+                        // Get room info to check last seen message
+                        const roomData = rooms[roomIndex];
+                        if (!roomData.lastMessageId || 
+                            (lastRoomMessage.id !== roomData.lastMessageId && 
+                             new Date(lastRoomMessage.timestamp) > new Date(roomData.lastMessageTime || 0))) {
+                            
+                            // Update unread count
+                            rooms[roomIndex].unreadCount = (rooms[roomIndex].unreadCount || 0) + 1;
+                            rooms[roomIndex].lastMessageId = lastRoomMessage.id;
+                            rooms[roomIndex].lastMessageTime = lastRoomMessage.timestamp;
+                        }
+                    }
                 }
             }
         });
         
+        // Save updated rooms
+        localStorage.setItem('chatRooms', JSON.stringify(rooms));
+        
+        // Update rooms list UI
+        updateRoomsList();
+        
         // Simulate other users' activity
         simulateUserActivity();
         
-    }, 2000); // Check every 2 seconds
+    }, 3000); // Check every 3 seconds
 }
 
 // Simulate user activity (typing, coming online/offline)
@@ -1039,48 +1164,51 @@ function simulateUserActivity() {
 
 // Simulate responses from other users
 function simulateResponses() {
-    // Only respond in certain rooms
-    if (!['general', 'random'].includes(currentRoomId)) return;
+    // Only respond in certain rooms and only 20% of the time
+    if (!['general', 'random', 'tech'].includes(currentRoomId) || Math.random() > 0.2) return;
     
-    // 30% chance of a response
-    if (Math.random() < 0.3) {
-        const responses = [
-            "That's interesting!",
-            "I agree with you.",
-            "Can you explain more about that?",
-            "Thanks for sharing!",
-            "I had a similar experience.",
-            "What do others think about this?",
-            "That's funny! 😄",
-            "I'm not sure I understand.",
-            "Great point!",
-            "Has anyone else tried this?"
-        ];
-        
-        // Random delay before response
-        setTimeout(() => {
-            const randomUser = users.find(u => u.isOnline && u.username !== currentUser.username);
-            if (randomUser) {
-                const response = responses[Math.floor(Math.random() * responses.length)];
-                
-                const message = {
-                    id: generateId(),
-                    roomId: currentRoomId,
-                    sender: randomUser.username,
-                    senderName: randomUser.name || randomUser.username,
-                    text: response,
-                    timestamp: new Date().toISOString(),
-                    type: 'text'
-                };
-                
-                addMessageToStorage(message);
-                addMessageToUI(message);
-                
-                // Scroll to bottom
-                scrollToBottom();
-            }
-        }, 1000 + Math.random() * 3000);
-    }
+    const responses = [
+        "That's interesting!",
+        "I agree with you.",
+        "Can you explain more about that?",
+        "Thanks for sharing!",
+        "I had a similar experience.",
+        "What do others think about this?",
+        "That's funny! 😄",
+        "I'm not sure I understand.",
+        "Great point!",
+        "Has anyone else tried this?"
+    ];
+    
+    // Random delay before response (1-4 seconds)
+    setTimeout(() => {
+        // Find a random online user (not current user)
+        const onlineUsers = users.filter(u => u.isOnline && u.username !== currentUser.username);
+        if (onlineUsers.length > 0) {
+            const randomUser = onlineUsers[Math.floor(Math.random() * onlineUsers.length)];
+            const response = responses[Math.floor(Math.random() * responses.length)];
+            
+            const message = {
+                id: generateId(),
+                roomId: currentRoomId,
+                sender: randomUser.username,
+                senderName: randomUser.name || randomUser.username,
+                text: response,
+                timestamp: new Date().toISOString(),
+                type: 'text'
+            };
+            
+            // Add message to storage and UI
+            addMessageToStorage(message);
+            addMessageToUI(message, false); // Don't add to storage (already done)
+            
+            // Scroll to bottom
+            scrollToBottom();
+            
+            // Update rooms list
+            updateRoomsList();
+        }
+    }, 1000 + Math.random() * 3000);
 }
 
 // Update user status
