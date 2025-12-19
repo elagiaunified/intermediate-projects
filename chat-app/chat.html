@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp | Chat Room</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css">
+</head>
+<body>
+    <!-- Main Chat Container -->
+    <div class="chat-container">
+        <!-- Left Sidebar - Chat Rooms & Users -->
+        <aside class="chat-sidebar">
+            <!-- User Profile -->
+            <div class="user-profile">
+                <div class="profile-header">
+                    <div class="avatar" id="userAvatar">
+                        <span class="avatar-text">U</span>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="userName">User</h3>
+                        <p class="status online" id="userStatus">Online</p>
+                    </div>
+                    <button class="menu-btn" id="userMenuBtn">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+                <div class="user-menu" id="userMenu">
+                    <ul>
+                        <li><a href="#"><i class="fas fa-user"></i> My Profile</a></li>
+                        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                        <li><a href="#"><i class="fas fa-moon"></i> Dark Mode</a></li>
+                        <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchChat" placeholder="Search messages or users...">
+            </div>
+
+            <!-- Chat Rooms Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h4>Chat Rooms</h4>
+                    <button class="icon-btn" id="createRoomBtn" title="Create New Room">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="rooms-list" id="roomsList">
+                    <!-- Rooms will be populated by JavaScript -->
+                    <div class="room-item active" data-room="general">
+                        <div class="room-icon">
+                            <i class="fas fa-hashtag"></i>
+                        </div>
+                        <div class="room-info">
+                            <h5>General</h5>
+                            <p class="last-message">Welcome to the chat!</p>
+                        </div>
+                        <div class="room-meta">
+                            <span class="unread-count">3</span>
+                            <span class="time">2m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Online Users Section -->
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <h4>Online Users <span class="online-count" id="onlineCount">1</span></h4>
+                </div>
+                <div class="users-list" id="usersList">
+                    <!-- Users will be populated by JavaScript -->
+                    <div class="user-item">
+                        <div class="user-avatar">
+                            <span class="avatar-text">U</span>
+                            <span class="status-indicator online"></span>
+                        </div>
+                        <div class="user-info">
+                            <h5>You</h5>
+                            <p class="user-status">Online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Room Modal -->
+            <div class="modal" id="createRoomModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Create New Room</h3>
+                        <button class="close-modal" id="closeRoomModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <label for="roomName">
+                                <i class="fas fa-hashtag"></i> Room Name
+                            </label>
+                            <input type="text" id="roomName" placeholder="Enter room name">
+                        </div>
+                        <div class="input-group">
+                            <label for="roomDescription">
+                                <i class="fas fa-align-left"></i> Description
+                            </label>
+                            <textarea id="roomDescription" placeholder="Enter room description (optional)" rows="3"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <i class="fas fa-lock"></i> Room Type
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-container">
+                                    <input type="radio" name="roomType" value="public" checked>
+                                    <span class="radio-checkmark"></span>
+                                    <span class="radio-label">
+                                        <i class="fas fa-globe"></i> Public
+                                        <small>Anyone can join</small>
+                                    </span>
+                                </label>
+                                <label class="radio-container">
+                                    <input type="radio" name="roomType" value="private">
+                                    <span class="radio-checkmark"></span>
+                                    <span class="radio-label">
+                                        <i class="fas fa-lock"></i> Private
+                                        <small>Invite only</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="cancelRoomBtn">Cancel</button>
+                        <button class="btn btn-primary" id="saveRoomBtn">Create Room</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div class="room-header">
+                    <div class="room-title">
+                        <h2 id="currentRoom">General</h2>
+                        <p id="roomDescription">General discussion room</p>
+                    </div>
+                    <div class="room-members">
+                        <div class="members-preview">
+                            <!-- Member avatars will be populated by JavaScript -->
+                            <div class="member-avatar" title="You">
+                                <span class="avatar-text">U</span>
+                            </div>
+                        </div>
+                        <span class="members-count" id="membersCount">1 member</span>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="icon-btn" id="roomInfoBtn" title="Room Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    <button class="icon-btn" id="inviteBtn" title="Invite People">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                    <button class="icon-btn" id="searchInChatBtn" title="Search in Chat">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" id="moreActionsBtn" title="More Actions">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages Container -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be populated by JavaScript -->
+                <div class="message-day">
+                    <span class="day-divider">Today</span>
+                </div>
+                <div class="message received">
+                    <div class="message-avatar">
+                        <span class="avatar-text">C</span>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <span class="message-sender">ChatBot</span>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message-text">
+                            Welcome to the chat! This is a simulated real-time chat application built with vanilla JavaScript. Start chatting with other users!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span id="typingUsers"></span>
+            </div>
+
+            <!-- Message Input Area -->
+            <div class="message-input-area">
+                <div class="input-actions">
+                    <button class="icon-btn" id="emojiBtn" title="Emoji">
+                        <i class="far fa-smile"></i>
+                    </button>
+                    <button class="icon-btn" id="attachBtn" title="Attach File">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="icon-btn" id="formatBtn" title="Format Text">
+                        <i class="fas fa-font"></i>
+                    </button>
+                </div>
+                <div class="message-input-wrapper">
+                    <div class="emojionearea" id="messageInput" contenteditable="true" placeholder="Type your message here..."></div>
+                    <div class="file-preview" id="filePreview"></div>
+                </div>
+                <div class="send-actions">
+                    <button class="icon-btn" id="voiceBtn" title="Voice Message">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="btn btn-primary" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Emoji Picker (Custom) -->
+            <div class="emoji-picker" id="emojiPicker">
+                <div class="emoji-header">
+                    <div class="emoji-categories">
+                        <button class="emoji-category active" data-category="people">😀</button>
+                        <button class="emoji-category" data-category="nature">🐶</button>
+                        <button class="emoji-category" data-category="food">🍕</button>
+                        <button class="emoji-category" data-category="activities">⚽</button>
+                        <button class="emoji-category" data-category="objects">💡</button>
+                        <button class="emoji-category" data-category="symbols">❤️</button>
+                    </div>
+                    <button class="close-emoji" id="closeEmoji">&times;</button>
+                </div>
+                <div class="emoji-grid" id="emojiGrid">
+                    <!-- Emojis will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- File Upload Modal -->
+            <div class="modal" id="fileUploadModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Upload File</h3>
+                        <button class="close-modal" id="closeFileModal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="upload-zone" id="uploadZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag and drop files here or click to browse</p>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                            <button class="btn btn-secondary" id="browseFiles">Browse Files</button>
+                        </div>
+                        <div class="file-list" id="fileList">
+                            <!-- Selected files will appear here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" id="cancelUpload">Cancel</button>
+                        <button class="btn btn-primary" id="sendFiles">Send Files</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Welcome Modal for First-time Users -->
+    <div class="modal welcome-modal" id="welcomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to ChatApp!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Hi <span id="welcomeUserName">User</span>!</h3>
+                    <p>You've successfully entered the chat. Here are some tips to get started:</p>
+                    <ul class="welcome-tips">
+                        <li><i class="fas fa-hashtag"></i> Join different chat rooms from the sidebar</li>
+                        <li><i class="fas fa-user-plus"></i> See who's online in the users list</li>
+                        <li><i class="fas fa-smile"></i> Use emojis by clicking the smiley button</li>
+                        <li><i class="fas fa-paperclip"></i> Share files and images with the attach button</li>
+                        <li><i class="fas fa-bell"></i> Messages are saved locally in your browser</li>
+                    </ul>
+                    <div class="quick-actions">
+                        <button class="btn btn-secondary" id="skipWelcome">Skip Tour</button>
+                        <button class="btn btn-primary" id="startTour">Start Quick Tour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
