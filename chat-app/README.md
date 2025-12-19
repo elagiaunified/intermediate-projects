@@ -2,6 +2,10 @@
 
 A modern, feature-rich chat application built with vanilla JavaScript that simulates real-time communication using localStorage.
 
+## 🚀 Live Demo
+
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-blue?style=for-the-badge&logo=github)](https://elagiaunified.github.io/intermediate-projects/chat-app/)
+
 ## Features
 
 ### Core Features
