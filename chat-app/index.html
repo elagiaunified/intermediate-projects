@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp | Secure Real-Time Messaging</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart@latest/css/emoji-mart.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
+    <style>
+        /* Login-specific styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h1 {
+            color: #4f46e5;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f9fafb;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .avatar-selection {
+            margin-bottom: 2rem;
+        }
+
+        .avatar-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .quick-join {
+            margin-bottom: 2rem;
+        }
+
+        .quick-join-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .room-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .room-btn {
+            padding: 0.75rem 1.5rem;
+            background: #e5e7eb;
+            border: none;
+            border-radius: 20px;
+            color: #374151;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .room-btn:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        .room-btn.primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .room-btn.primary:hover {
+            background: #4338ca;
+        }
+
+        .login-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .guest-mode {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .guest-mode a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .guest-mode a:hover {
+            text-decoration: underline;
+        }
+
+        .feature-list {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 12px;
+            background: #f9fafb;
+        }
+
+        .feature-item i {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-item h4 {
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .feature-item p {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .demo-credentials {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .demo-title {
+            color: #92400e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-list {
+            color: #92400e;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .login-card {
+                padding: 2rem;
+            }
+
+            .login-header h1 {
+                font-size: 2rem;
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .avatar-option {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1><i class="fas fa-comments"></i> ChatApp</h1>
+                <p>Secure, real-time messaging for everyone</p>
+            </div>
+
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Choose a Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="form-input" 
+                        placeholder="Enter your username" 
+                        required 
+                        minlength="3"
+                        maxlength="20"
+                        autocomplete="off"
+                    >
+                    <small style="color: #6b7280; font-size: 0.85rem; display: block; margin-top: 0.25rem;">
+                        3-20 characters, letters and numbers only
+                    </small>
+                </div>
+
+                <div class="avatar-selection">
+                    <div class="avatar-title">Choose Your Avatar</div>
+                    <div class="avatar-grid" id="avatar-grid">
+                        <!-- Avatars will be generated by JavaScript -->
+                        <div class="avatar-option selected" data-avatar="👤">
+                            👤
+                        </div>
+                        <div class="avatar-option" data-avatar="😊">
+                            😊
+                        </div>
+                        <div class="avatar-option" data-avatar="🤖">
+                            🤖
+                        </div>
+                        <div class="avatar-option" data-avatar="👩‍💻">
+                            👩‍💻
+                        </div>
+                        <div class="avatar-option" data-avatar="👨‍🎓">
+                            👨‍🎓
+                        </div>
+                        <div class="avatar-option" data-avatar="🦄">
+                            🦄
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-join">
+                    <div class="quick-join-title">Quick Join</div>
+                    <div class="room-buttons">
+                        <button type="button" class="room-btn" data-room="general">#general</button>
+                        <button type="button" class="room-btn" data-room="random">#random</button>
+                        <button type="button" class="room-btn" data-room="help">#help</button>
+                        <button type="button" class="room-btn primary" id="create-room-btn">
+                            <i class="fas fa-plus"></i> Create Room
+                        </button>
+                    </div>
+                </div>
+
+                <div class="login-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Enter Chat
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="guest-login">
+                        <i class="fas fa-user-clock"></i> Continue as Guest
+                    </button>
+                </div>
+
+                <div class="guest-mode">
+                    <p>Guest users can read messages but cannot send them.</p>
+                </div>
+
+                <div class="demo-credentials">
+                    <div class="demo-title">
+                        <i class="fas fa-info-circle"></i> Demo Features
+                    </div>
+                    <div class="demo-list">
+                        • Real-time messaging simulation<br>
+                        • Multiple chat rooms<br>
+                        • Emoji & image support<br>
+                        • Typing indicators<br>
+                        • Message reactions<br>
+                        • Dark/Light mode
+                    </div>
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <i class="fas fa-bolt"></i>
+                            <h4>Real-Time</h4>
+                            <p>Instant message delivery</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-lock"></i>
+                            <h4>Secure</h4>
+                            <p>Local data storage</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h4>Responsive</h4>
+                            <p>Works on all devices</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-smile"></i>
+                            <h4>Emoji</h4>
+                            <p>Rich emoji support</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Room Creation Modal -->
+    <div id="room-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Create New Room</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="room-name" class="form-label">Room Name</label>
+                    <input type="text" id="room-name" class="form-input" placeholder="e.g., tech-talk" required>
+                </div>
+                <div class="form-group">
+                    <label for="room-description" class="form-label">Description (Optional)</label>
+                    <textarea id="room-description" class="form-input" rows="3" placeholder="What's this room about?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="room-private">
+                        <span>Private Room (Requires invitation)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-room">Cancel</button>
+                <button class="btn btn-primary" id="create-room">Create Room</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
