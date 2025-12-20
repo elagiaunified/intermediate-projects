@@ -4,7 +4,7 @@ A comprehensive multi-currency expense tracking application with real-time excha
 ![Expense Tracker Preview](https://img.shields.io/badge/Status-Complete-success) ![Technology](https://img.shields.io/badge/Tech-HTML/CSS/JS-blue) ![API](https://img.shields.io/badge/API-ExchangeRate--API-orange) ![Multi-Currency](https://img.shields.io/badge/Features-Multi--Currency/Charts/Budgeting-green)
 
 ## LIVE DEMO!
-| [View Demo](https://elagiaunified.github.io/intermediate-projects/expense-tracker/new/) |
+[View Demo](https://elagiaunified.github.io/intermediate-projects/expense-tracker/new/)
 
 ## ✨ Features
 ## 🌍 Multi-Currency Support
