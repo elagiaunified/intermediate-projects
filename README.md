@@ -8,9 +8,9 @@ A collection of intermediate-level web applications that demonstrate advanced Ja
 |---|---------|-------------|------------|-----------|
 | 1 | [**Weather App**](/weather-app/) | Real-time weather forecasts with geolocation | HTML, CSS, JS, OpenWeather API | [View Demo](https://elagiaunified.github.io/intermediate-projects/weather-app/) |
 | 2 | [**Recipe Finder**](/recipe-finder/) | Recipe search with meal planning and favorites | HTML, CSS, JS, TheMealDB API | [View Demo](https://elagiaunified.github.io/intermediate-projects/recipe-finder/) |
-| 3 | Expense Tracker* | Financial tracking with charts & analytics | HTML, CSS, JS, Chart.js | Coming Soon |
-| 4 | Blog/CMS* | Content management system with rich text editor | HTML, CSS, JS, localStorage | Coming Soon |
-| 5 | Chat App* | Real-time messaging interface | HTML, CSS, JS, WebSocket concepts | Coming Soon |
+| 3 | [**Expense Tracker**](/expense-tracker/) | Financial tracking with charts & analytics | HTML, CSS, JS, Chart.js | [View Demo](https://elagiaunified.github.io/intermediate-projects/expense-tracker/) |
+| 4 | [**Blog/CMS**](/blog-cms/) | Content management system with rich text editor | HTML, CSS, JS, localStorage | [View Demo](https://elagiaunified.github.io/intermediate-projects/blog-cms/) |
+| 5 | [**Chat App**](/chat-app/) | Real-time messaging interface | HTML, CSS, JS, localStorage | [View Demo](https://elagiaunified.github.io/intermediate-projects/chat-app/) |
 
 *Projects under development
 
@@ -148,10 +148,8 @@ git push origin feature/amazing-feature
 This project is open source and available under the MIT License.
 
 ## 👨‍💻 Author
-- Your Name
-- GitHub: @yourusername
-- Portfolio: [Coming Soon]
-- LinkedIn: [Your Profile]
+- ElagiaUnified
+- GitHub: @elagiaunified
 
 ## 🌟 Acknowledgments
 - OpenWeatherMap for weather data API
