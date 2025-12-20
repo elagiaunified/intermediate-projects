@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css">
 </head>
 <body>
     <!-- Main Chat Container -->
@@ -32,7 +31,7 @@
                     <ul>
                         <li><a href="#"><i class="fas fa-user"></i> My Profile</a></li>
                         <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                        <li><a href="#"><i class="fas fa-moon"></i> Dark Mode</a></li>
+                        <li><a href="#" id="darkModeToggle"><i class="fas fa-moon"></i> Dark Mode</a></li>
                         <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </div>
@@ -105,10 +104,10 @@
                             <input type="text" id="roomName" placeholder="Enter room name">
                         </div>
                         <div class="input-group">
-                            <label for="roomDescription">
+                            <label for="roomDesc">
                                 <i class="fas fa-align-left"></i> Description
                             </label>
-                            <textarea id="roomDescription" placeholder="Enter room description (optional)" rows="3"></textarea>
+                            <textarea id="roomDesc" placeholder="Enter room description (optional)" rows="3"></textarea>
                         </div>
                         <div class="input-group">
                             <label>
@@ -223,7 +222,7 @@
                     </button>
                 </div>
                 <div class="message-input-wrapper">
-                    <div class="emojionearea" id="messageInput" contenteditable="true" placeholder="Type your message here..."></div>
+                    <div class="message-input" id="messageInput" contenteditable="true" placeholder="Type your message here..."></div>
                     <div class="file-preview" id="filePreview"></div>
                 </div>
                 <div class="send-actions">
@@ -314,7 +313,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
     <script src="chat.js"></script>
 </body>
 </html>
