@@ -491,29 +491,40 @@ function setupChatEventListeners() {
     sendBtn.addEventListener('click', sendMessage);
     
     // Send message on Enter key (Shift+Enter for new line)
-    // Note: Since we're using emojionearea, we need to attach to the actual input
-    const messageInputField = document.querySelector('.emojionearea-editor');
-    if (messageInputField) {
-        messageInputField.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-            
-            // Show typing indicator
-            if (!isTyping) {
-                isTyping = true;
-                updateTypingIndicator();
-            }
-            
-            // Reset typing timeout
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                isTyping = false;
-                updateTypingIndicator();
-            }, 1000);
-        });
-    }
+    messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+        
+        // Show typing indicator
+        if (!isTyping) {
+            isTyping = true;
+            updateTypingIndicator();
+        }
+        
+        // Reset typing timeout
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            isTyping = false;
+            updateTypingIndicator();
+        }, 1000);
+    });
+    
+    // Typing indicator on input
+    messageInput.addEventListener('input', () => {
+        if (!isTyping) {
+            isTyping = true;
+            updateTypingIndicator();
+        }
+        
+        // Reset typing timeout
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            isTyping = false;
+            updateTypingIndicator();
+        }, 1000);
+    });
     
     // Emoji picker
     emojiBtn.addEventListener('click', toggleEmojiPicker);
@@ -580,44 +591,11 @@ function setupChatEventListeners() {
             hideUserMenu();
         }
     });
-    
-    // Initialize emojionearea
-    $(document).ready(function() {
-        if ($('#messageInput').length) {
-            $('#messageInput').emojioneArea({
-                pickerPosition: 'top',
-                tonesStyle: 'bullet',
-                events: {
-                    keyup: function() {
-                        // Show typing indicator
-                        if (!isTyping) {
-                            isTyping = true;
-                            updateTypingIndicator();
-                        }
-                        
-                        // Reset typing timeout
-                        clearTimeout(typingTimeout);
-                        typingTimeout = setTimeout(() => {
-                            isTyping = false;
-                            updateTypingIndicator();
-                        }, 1000);
-                    }
-                }
-            });
-        }
-    });
 }
 
 // Send message
 function sendMessage() {
-    const emojioneArea = $('.emojionearea-editor');
-    let text = '';
-    
-    if (emojioneArea.length) {
-        text = emojioneArea[0].innerText.trim();
-    } else {
-        text = messageInput.innerText.trim();
-    }
+    const text = messageInput.innerText.trim();
     
     if (!text && selectedFiles.length === 0) {
         showToast('Please enter a message or attach a file', 'error');
@@ -640,11 +618,11 @@ function sendMessage() {
         addMessageToUI(message);
         
         // Clear input
-        if (emojioneArea.length) {
-            emojioneArea[0].innerText = '';
-        } else {
-            messageInput.innerText = '';
-        }
+        messageInput.innerText = '';
+        
+        // Reset typing indicator
+        isTyping = false;
+        updateTypingIndicator();
     }
     
     // Send files if any
@@ -849,13 +827,9 @@ function initEmojiPicker() {
 
 // Insert emoji into message input
 function insertEmoji(emoji) {
-    const emojioneArea = $('.emojionearea-editor');
-    if (emojioneArea.length) {
-        const editor = emojioneArea[0];
-        const textNode = document.createTextNode(emoji);
-        editor.appendChild(textNode);
-        editor.focus();
-    }
+    const currentText = messageInput.innerText;
+    messageInput.innerText = currentText + emoji;
+    messageInput.focus();
     
     // Hide emoji picker after selection
     hideEmojiPicker();
@@ -979,7 +953,7 @@ function startQuickTour() {
     const tourSteps = [
         { element: roomsList, text: 'This is where you can see and switch between chat rooms' },
         { element: usersList, text: 'Here you can see who is online and their status' },
-        { element: document.querySelector('.emojionearea-editor'), text: 'Type your messages here and press Enter to send' },
+        { element: messageInput, text: 'Type your messages here and press Enter to send' },
         { element: emojiBtn, text: 'Click here to add emojis to your messages' },
         { element: attachBtn, text: 'Use this button to share files and images' }
     ];
